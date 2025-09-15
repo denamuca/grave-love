@@ -7,7 +7,11 @@ import { ThemedView } from '@/components/themed-view';
 export default function ModalScreen() {
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title">This is a modal</ThemedText>
+      <ThemedText type="title">Create Memorial (Prototype)</ThemedText>
+      <ThemedText style={{ textAlign: 'center', marginTop: 8 }}>
+        In the MVP prototype, this screen is a placeholder. In the full app, you’ll enter
+        person details, add photos, set cemetery/plot, and generate a QR tag.
+      </ThemedText>
       <Link href="/" dismissTo style={styles.link}>
         <ThemedText type="link">Go to home screen</ThemedText>
       </Link>

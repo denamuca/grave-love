@@ -4,21 +4,74 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { AppProvider } from '@/lib/store/AppContext';
+import { Colors, ForceDark } from '@/constants/theme';
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+  anchor: '(main)',
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = ForceDark ? 'dark' : useColorScheme();
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
+      <AppProvider>
+        <Stack screenOptions={{ headerBackTitleVisible: false }}>
+          <Stack.Screen name="(main)" options={{ headerShown: false }} />
+          <Stack.Screen name="memorial/[id]" options={{
+            title: 'Memorial',
+            headerBackTitleVisible: false,
+            headerStyle: { backgroundColor: Colors[colorScheme ?? 'dark'].card },
+            headerTintColor: Colors[colorScheme ?? 'dark'].text,
+            headerTitleStyle: { color: Colors[colorScheme ?? 'dark'].text },
+            headerShadowVisible: false,
+          }} />
+          <Stack.Screen name="memorial/create" options={{
+            title: 'Create Memorial',
+            headerBackTitleVisible: false,
+            headerBackTitle: '',
+            headerStyle: { backgroundColor: Colors[colorScheme ?? 'dark'].card },
+            headerTintColor: Colors[colorScheme ?? 'dark'].text,
+            headerTitleStyle: { color: Colors[colorScheme ?? 'dark'].text },
+            headerShadowVisible: false,
+          }} />
+          <Stack.Screen name="order/new" options={{
+            title: 'New Order',
+            headerBackTitleVisible: false,
+            headerStyle: { backgroundColor: Colors[colorScheme ?? 'dark'].card },
+            headerTintColor: Colors[colorScheme ?? 'dark'].text,
+            headerTitleStyle: { color: Colors[colorScheme ?? 'dark'].text },
+            headerShadowVisible: false,
+          }} />
+          <Stack.Screen name="subscription/new" options={{
+            title: 'Subscription',
+            headerBackTitleVisible: false,
+            headerStyle: { backgroundColor: Colors[colorScheme ?? 'dark'].card },
+            headerTintColor: Colors[colorScheme ?? 'dark'].text,
+            headerTitleStyle: { color: Colors[colorScheme ?? 'dark'].text },
+            headerShadowVisible: false,
+          }} />
+          <Stack.Screen name="job/[jobId]" options={{
+            title: 'Job',
+            headerBackTitleVisible: false,
+            headerStyle: { backgroundColor: Colors[colorScheme ?? 'dark'].card },
+            headerTintColor: Colors[colorScheme ?? 'dark'].text,
+            headerTitleStyle: { color: Colors[colorScheme ?? 'dark'].text },
+            headerShadowVisible: false,
+          }} />
+          <Stack.Screen name="reminders" options={{
+            title: 'Reminders',
+            headerBackTitleVisible: false,
+            headerStyle: { backgroundColor: Colors[colorScheme ?? 'dark'].card },
+            headerTintColor: Colors[colorScheme ?? 'dark'].text,
+            headerTitleStyle: { color: Colors[colorScheme ?? 'dark'].text },
+            headerShadowVisible: false,
+          }} />
+          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        </Stack>
+      </AppProvider>
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
     </ThemeProvider>
   );
 }

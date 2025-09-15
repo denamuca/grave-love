@@ -48,3 +48,14 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Project Docs
+
+Planning and product docs for Grave Love:
+
+- docs/PRD.md:1 — Product requirements, MVP → v1.0 scope
+- docs/navigation.md:1 — Screen map and route groups (Expo Router)
+- docs/data-model.md:1 — Entities, relationships, and permissions
+- docs/api.md:1 — REST endpoints and webhooks
+- docs/architecture.md:1 — Tech stack, flows, and structure
+- docs/roadmap.md:1 — Milestones and risks

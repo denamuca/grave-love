@@ -5,25 +5,38 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+// Gold accent for a dignified palette
+const gold = '#C8A14B';
+
+// Force dark mode for the prototype look
+export const ForceDark = true;
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    // Use a dark UI even when system is light to keep the brand look consistent
+    text: '#E6E7EA',
+    background: '#0F1115',
+    tint: gold,
+    icon: '#8C919A',
+    tabIconDefault: '#6F7480',
+    tabIconSelected: gold,
+    // Additions for components
+    card: '#141821',
+    border: '#262C36',
+    muted: '#A0A4AA',
+    gold,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text: '#E6E7EA',
+    background: '#0F1115',
+    tint: gold,
+    icon: '#8C919A',
+    tabIconDefault: '#6F7480',
+    tabIconSelected: gold,
+    card: '#141821',
+    border: '#262C36',
+    muted: '#A0A4AA',
+    gold,
   },
 };
 
