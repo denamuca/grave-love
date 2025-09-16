@@ -16,7 +16,7 @@ export default function CreateMemorial() {
   const [dateDeath, setDateDeath] = useState('');
   const [cemetery, setCemetery] = useState('');
   const [slugVal, setSlugVal] = useState(slug ?? '');
-  const scheme = useColorScheme() ?? 'dark';
+  const scheme = useColorScheme() ?? 'light';
 
   return (
     <ThemedView style={styles.container}>

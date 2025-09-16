@@ -15,7 +15,7 @@ export default function ProfileScreen() {
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top + 12 }] }>
-      <ThemedText type="title">Profile & Reminders</ThemedText>
+      <ThemedText type="title" style={{ textAlign: 'center' }}>Profile & Reminders</ThemedText>
       <Card>
         <View style={styles.row}>
           <ThemedText>Birthday reminders</ThemedText>

@@ -40,24 +40,25 @@ export type Job = {
 export const memorials: Memorial[] = [
   {
     id: 'm1',
-    slug: 'john-doe',
-    name_full: 'John A. Doe',
+    slug: 'walter-bennett',
+    name_full: 'Walter James Bennett',
     date_birth: '1945-03-14',
     date_death: '2023-10-30',
     bio: 'Beloved father, avid gardener, and jazz enthusiast.',
     cemetery: 'Greenwood Cemetery',
     plot: 'Section B, Row 4, Plot 12',
-    cover_image: require('@/assets/images/partial-react-logo.png'),
+    cover_image: require('@/assets/images/grandfather.jpg'),
   },
   {
     id: 'm2',
-    slug: 'jane-smith',
-    name_full: 'Jane Smith',
+    slug: 'margaret-bennett',
+    name_full: 'Margaret Rose Bennett',
     date_birth: '1952-07-02',
     date_death: '2022-05-18',
     bio: 'Teacher, volunteer, and friend to many.',
     cemetery: 'Evergreen Memorial Park',
     plot: 'Lot 7, Plot 3',
+    cover_image: require('@/assets/images/grandmother.jpg'),
   },
 ];
 
@@ -82,7 +83,7 @@ export const posts: Post[] = [
     id: 'p3',
     memorial_id: 'm2',
     type: 'photo',
-    text: 'Jane at the school fundraiser, 2019',
+    text: 'At the school fundraiser, 2019',
     media_url: 'https://picsum.photos/300/200',
     created_at: '2024-10-20T09:30:00Z',
     author: 'PTA',
@@ -98,7 +99,7 @@ export const jobs: Job[] = [
   {
     id: 'j1',
     memorial_id: 'm1',
-    memorial_name: 'John A. Doe',
+    memorial_name: 'Walter James Bennett',
     type: 'cleaning',
     scheduled_date: '2025-10-30',
     status: 'scheduled',
@@ -107,10 +108,9 @@ export const jobs: Job[] = [
   {
     id: 'j2',
     memorial_id: 'm2',
-    memorial_name: 'Jane Smith',
+    memorial_name: 'Margaret Rose Bennett',
     type: 'flowers',
     scheduled_date: '2025-10-31',
     status: 'scheduled',
   },
 ];
-

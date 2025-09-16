@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "grave-love-app",
+    "name": "Grave Love",
     "slug": "grave-love-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -43,6 +43,19 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "821f78c7-3a4e-4e0a-8daf-973674db1366"
+      }
+    },
+    "owner": "denamuca16",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/821f78c7-3a4e-4e0a-8daf-973674db1366"
     }
   }
 }

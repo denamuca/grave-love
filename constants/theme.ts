@@ -5,34 +5,40 @@
 
 import { Platform } from 'react-native';
 
-// Gold accent for a dignified palette
-const gold = '#C8A14B';
+const accentBlue = '#3a7ca5';
+const softBackground = '#F4F6F9';
+const cardWhite = '#FFFFFF';
+const borderLight = '#E5E7EB';
+const textDark = '#1F2937';
+const mutedGray = '#6B7280';
 
-// Force dark mode for the prototype look
-export const ForceDark = true;
+// Candle gold accent used sparingly
+const gold = '#F2C15A';
+
+// Do not force dark; allow system/light
+export const ForceDark = false;
 
 export const Colors = {
   light: {
-    // Use a dark UI even when system is light to keep the brand look consistent
-    text: '#E6E7EA',
-    background: '#0F1115',
-    tint: gold,
-    icon: '#8C919A',
-    tabIconDefault: '#6F7480',
-    tabIconSelected: gold,
-    // Additions for components
-    card: '#141821',
-    border: '#262C36',
-    muted: '#A0A4AA',
+    text: textDark,
+    background: softBackground,
+    tint: accentBlue,
+    icon: '#64748B',
+    tabIconDefault: '#94A3B8',
+    tabIconSelected: accentBlue,
+    card: cardWhite,
+    border: borderLight,
+    muted: mutedGray,
     gold,
   },
   dark: {
+    // Keep existing pleasant dark for users on dark mode
     text: '#E6E7EA',
     background: '#0F1115',
-    tint: gold,
+    tint: accentBlue,
     icon: '#8C919A',
     tabIconDefault: '#6F7480',
-    tabIconSelected: gold,
+    tabIconSelected: accentBlue,
     card: '#141821',
     border: '#262C36',
     muted: '#A0A4AA',
@@ -46,6 +52,8 @@ export const Fonts = Platform.select({
     sans: 'system-ui',
     /** iOS `UIFontDescriptorSystemDesignSerif` */
     serif: 'ui-serif',
+    /** Display/script for titles (add custom loaded font later on native) */
+    display: 'ui-serif',
     /** iOS `UIFontDescriptorSystemDesignRounded` */
     rounded: 'ui-rounded',
     /** iOS `UIFontDescriptorSystemDesignMonospaced` */
@@ -54,12 +62,14 @@ export const Fonts = Platform.select({
   default: {
     sans: 'normal',
     serif: 'serif',
+    display: 'serif',
     rounded: 'normal',
     mono: 'monospace',
   },
   web: {
     sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
     serif: "Georgia, 'Times New Roman', serif",
+    display: "'Niconne', Georgia, 'Times New Roman', serif",
     rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
     mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
   },

@@ -20,8 +20,11 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerBackTitleVisible: false }}>
           <Stack.Screen name="(main)" options={{ headerShown: false }} />
           <Stack.Screen name="memorial/[id]" options={{
-            title: 'Memorial',
+            // Show only the back chevron — no title or back label
+            headerTitle: '',
+            headerBackTitle: '',
             headerBackTitleVisible: false,
+            headerBackButtonDisplayMode: 'minimal',
             headerStyle: { backgroundColor: Colors[colorScheme ?? 'dark'].card },
             headerTintColor: Colors[colorScheme ?? 'dark'].text,
             headerTitleStyle: { color: Colors[colorScheme ?? 'dark'].text },

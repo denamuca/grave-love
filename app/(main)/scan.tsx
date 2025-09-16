@@ -11,9 +11,9 @@ import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ScanScreen() {
-  const [code, setCode] = useState('john-doe');
+  const [code, setCode] = useState('walter-bennett');
   const { memorials } = useApp();
-  const scheme = useColorScheme() ?? 'dark';
+  const scheme = useColorScheme() ?? 'light';
   const insets = useSafeAreaInsets();
 
   return (
@@ -42,13 +42,13 @@ export default function ScanScreen() {
       <TextInput
         value={code}
         onChangeText={setCode}
-        placeholder="john-doe"
+        placeholder="walter-bennett"
         placeholderTextColor={Colors[scheme].muted}
         style={[styles.input, { backgroundColor: Colors[scheme].card, borderColor: Colors[scheme].border, color: Colors[scheme].text }]}
       />
 
       <View style={styles.chipsRow}>
-        {['john-doe', 'jane-smith'].map((slug) => (
+        {['walter-bennett', 'margaret-bennett'].map((slug) => (
           <TouchableOpacity key={slug} onPress={() => setCode(slug)} style={[styles.chip, { borderColor: Colors[scheme].border, backgroundColor: Colors[scheme].card }]}> 
             <ThemedText style={{ opacity: 0.9 }}>{slug}</ThemedText>
           </TouchableOpacity>

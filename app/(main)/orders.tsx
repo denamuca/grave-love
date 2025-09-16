@@ -19,7 +19,7 @@ export default function OrdersScreen() {
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top + 12 }] }>
-      <ThemedText type="title">Orders</ThemedText>
+      <ThemedText type="title" style={{ textAlign: 'center' }}>Orders</ThemedText>
       {orders.length === 0 ? (
         <ThemedText style={{ opacity: 0.7 }}>No orders yet. Place one from a memorial.</ThemedText>
       ) : null}
