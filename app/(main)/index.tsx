@@ -92,10 +92,10 @@ export default function FamilyHomeScreen() {
               />
             ) : null}
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4, paddingRight: (p.type === 'candle' || p.type === 'message' || p.type === 'flowers') ? 96 : 0 }}>
-              <ThemedText style={{fontSize:20}} type="defaultSemiBold">{p.type.toUpperCase()}</ThemedText>
+              <ThemedText style={{fontSize:20, fontWeight: 'bold'}} type="defaultSemiBold">{p.type.toUpperCase()}</ThemedText>
             </View>
             <ThemedText style={{fontSize:18}}>{p.text}</ThemedText>
-            <ThemedText style={{ opacity: 0.7, marginTop: 6 }}>
+            <ThemedText style={{ opacity: 0.7, marginTop: 6 , textAlign: 'center'}}>
               {new Date(p.created_at).toDateString()}
             </ThemedText>
           </Card>

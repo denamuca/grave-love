@@ -1,7 +1,9 @@
+import ScreenBackground from '@/components/screen-background';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import LottieOverlay from '@/components/ui/LottieOverlay';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useApp } from '@/lib/store/AppContext';
@@ -9,12 +11,11 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Link, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, Image as RNImage, ScrollView, StyleSheet, View } from 'react-native';
-import ScreenBackground from '@/components/screen-background';
 
 export default function MemorialDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const navigation = useNavigation();
-  const { memorials, posts, serviceTypes, addPost } = useApp();
+  const { memorials, posts, serviceTypes, addPost, candlesByName, startNameCandle } = useApp();
   const memorial = memorials.find((m) => m.id === id) ?? memorials[0];
   const timeline = useMemo(() => posts.filter((p) => p.memorial_id === memorial.id), [posts, memorial.id]);
   const scheme = useColorScheme() ?? 'light';
@@ -22,8 +23,11 @@ export default function MemorialDetail() {
 
   // Ensure the header shows only a back button (no title/label)
   useEffect(() => {
-    navigation.setOptions?.({ headerBackTitle: '', headerBackTitleVisible: false });
+    navigation.setOptions?.({ headerTitle: '', headerBackTitle: '', headerBackTitleVisible: false });
   }, [navigation]);
+
+  const candleUntil = candlesByName?.[memorial.id] ?? null;
+  const isNameCandleActive = !!(candleUntil && new Date(candleUntil).getTime() > Date.now());
 
   return (
     <ScreenBackground>
@@ -44,7 +48,21 @@ export default function MemorialDetail() {
             </View>
           </View>
         </View>
-        <ThemedText type="title" style={styles.name}>{memorial.name_full}</ThemedText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <ThemedText type="title" style={styles.name}>{memorial.name_full}</ThemedText>
+          {isNameCandleActive ? (
+            <RNImage source={require('@/assets/images/candle.png')} style={{ width: 20, height: 20 }} />
+          ) : null}
+        </View>
+        <View style={{ marginTop: 6 }}>
+          {isNameCandleActive ? (
+            <ThemedText style={{ textAlign: 'center', color: Colors[scheme].muted }}>
+              Candle burning until {new Date(candleUntil!).toDateString()}
+            </ThemedText>
+          ) : (
+            <Button variant="ghost" onPress={() => startNameCandle(memorial.id)}>Place name candle ($3)</Button>
+          )}
+        </View>
         <ThemedText style={{ color: Colors[scheme].muted }}>{`${memorial.date_birth} - ${memorial.date_death}`}</ThemedText>
         {memorial.cemetery ? (
           <ThemedText style={{ color: Colors[scheme].muted }}>Resting Place: {memorial.cemetery}{memorial.plot ? `, ${memorial.plot}` : ''}</ThemedText>
@@ -79,7 +97,7 @@ export default function MemorialDetail() {
 
       {tab === 'wall' && (
         <ThemedView lightColor="transparent" darkColor="transparent" style={styles.section}>
-          <ThemedText type="subtitle">Memorial Wall</ThemedText>
+          <ThemedText type="title">Memorial Wall</ThemedText>
           <Card>
             <View style={styles.rowBetween}>
               <Link href={{ pathname: '/order/new', params: { memorialId: memorial.id, serviceId: serviceTypes[0]?.id } }} asChild>
@@ -89,54 +107,110 @@ export default function MemorialDetail() {
               </Link>
               <Button
                 variant="ghost"
-                onPress={() => addPost({ memorial_id: memorial.id, type: 'candle', text: 'Lighting a candle', author: 'You' })}>
+                onPress={() => addPost({ memorial_id: memorial.id, type: 'candle', text: 'Lighting a candle from M.', author: 'You' })}>
                 Quick add
               </Button>
             </View>
           </Card>
-          {timeline.map((p) => (
-            <Card key={p.id}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          {timeline.map((p) => {
+            const isMessage = p.type === 'message';
+            const postStyle = isMessage
+              ? {
+                  backgroundColor: scheme === 'dark' ? 'rgba(234, 223, 204, 0.10)' : Colors[scheme].ivory,
+                  borderColor: Colors[scheme].gold,
+                }
+              : undefined;
+            return (
+              <Card key={p.id} style={[postStyle, { position: 'relative' }]}>
+                {/* Lottie animation on the right for memorial wall */}
                 {p.type === 'candle' ? (
-                  <RNImage source={require('@/assets/images/candle.png')} style={{ width: 20, height: 20 }} />
+                  <LottieOverlay
+                    source={require('@/assets/lottie/candle_giff.json')}
+                    width={72}
+                    height={72}
+                    style={{ position: 'absolute', right: 4, bottom: 4 }}
+                  />
                 ) : p.type === 'message' ? (
-                  <RNImage source={require('@/assets/images/message.png')} style={{ width: 20, height: 20 }} />
+                  <LottieOverlay
+                    source={require('@/assets/lottie/message.json')}
+                    width={72}
+                    height={72}
+                    style={{ position: 'absolute', right: 4, bottom: 4 }}
+                  />
                 ) : p.type === 'flowers' ? (
-                  <RNImage source={require('@/assets/images/flower.png')} style={{ width: 20, height: 20 }} />
+                  <LottieOverlay
+                    source={require('@/assets/lottie/flower_giff.json')}
+                    width={72}
+                    height={72}
+                    style={{ position: 'absolute', right: 4, bottom: 4 }}
+                  />
                 ) : null}
-                <ThemedText type="defaultSemiBold">{p.type.toUpperCase()}</ThemedText>
-              </View>
-              <ThemedText>{p.text}</ThemedText>
-              {p.media_url ? (
-                <RNImage source={{ uri: p.media_url }} style={{ height: 160, borderRadius: 8, marginTop: 8 }} />
-              ) : null}
-            </Card>
-          ))}
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: (p.type === 'candle' || p.type === 'message' || p.type === 'flowers') ? 80 : 0 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <ThemedText style={{ fontWeight: 'bold', fontSize: 20 }} type="defaultSemiBold">{p.type.toUpperCase()}</ThemedText>
+                  </View>
+                  <ThemedText style={{ color: Colors[scheme].muted,}}>{new Date(p.created_at).toDateString()}</ThemedText>
+                </View>
+                {p.text ? (
+                  <ThemedText style={{ marginTop: 6 }}>{p.text}</ThemedText>
+                ) : null}
+                {p.media_url ? (
+                  <RNImage source={{ uri: p.media_url }} style={{ height: 160, borderRadius: 8, marginTop: 8 }} />
+                ) : null}
+              </Card>
+            );
+          })}
         </ThemedView>
       )}
 
       {tab === 'timeline' && (
         <ThemedView lightColor="transparent" darkColor="transparent" style={styles.section}>
-          <ThemedText type="subtitle">Family Timeline</ThemedText>
+          <ThemedText type="title">Family Timeline</ThemedText>
+          {/* Static delivery photo example */}
+          <Card>
+            <RNImage
+              source={require('@/assets/images/delivery_cementery.jpg')}
+              style={{ width: '100%', height: 200, borderRadius: 12 }}
+              resizeMode="cover"
+            />
+          </Card>
           {timeline.map((p) => (
             <Card key={p.id}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                {p.type === 'candle' ? (
-                  <RNImage source={require('@/assets/images/candle.png')} style={{ width: 20, height: 20 }} />
-                ) : p.type === 'message' ? (
-                  <RNImage source={require('@/assets/images/message.png')} style={{ width: 20, height: 20 }} />
-                ) : p.type === 'flowers' ? (
-                  <RNImage source={require('@/assets/images/flower.png')} style={{ width: 20, height: 20 }} />
-                ) : null}
-                <ThemedText type="defaultSemiBold">{p.type.toUpperCase()}</ThemedText>
+              <View style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                <RNImage
+                  source={
+                    p.media_url
+                      ? { uri: p.media_url }
+                      : p.type === 'candle'
+                      ? require('@/assets/images/candle_memorial.webp')
+                      : p.type === 'flowers'
+                      ? require('@/assets/images/flower_bouqet_memorial.jpeg')
+                      : require('@/assets/images/old_photo_memorial.webp')
+                  }
+                  style={{ width: 104, height: 104, borderRadius: 14, backgroundColor: Colors[scheme].card }}
+                />
+                <View style={{ flex: 1 }}>
+                  <ThemedText style={{ fontSize: 16 }}>
+                    {p.text ?? (p.type === 'candle' ? 'Lighting a candle in your memory' : p.type)}
+                  </ThemedText>
+                  {p.author ? (
+                    <ThemedText style={{ color: Colors[scheme].muted, marginTop: 6 }}>– {p.author}</ThemedText>
+                  ) : null}
+                </View>
               </View>
-              <ThemedText>{p.text}</ThemedText>
-              <ThemedText style={{ color: Colors[scheme].muted, marginTop: 4 }}>
-                {new Date(p.created_at).toDateString()}{p.author ? ` · ${p.author}` : ''}
-              </ThemedText>
-              {p.media_url ? (
-                <RNImage source={{ uri: p.media_url }} style={{ height: 160, borderRadius: 8, marginTop: 8 }} />
-              ) : null}
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 18, marginTop: 12 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <MaterialIcons name="favorite-border" size={18} color={Colors[scheme].tint as any} />
+                  <ThemedText style={{ color: Colors[scheme].muted }}>1</ThemedText>
+                </View>
+                <MaterialIcons name="local-florist" size={18} color={Colors[scheme].tint as any} />
+                <MaterialIcons name="water-drop" size={18} color={Colors[scheme].tint as any} />
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginLeft: 'auto' }}>
+                  <MaterialIcons name="mode-comment" size={18} color={Colors[scheme].muted as any} />
+                  <ThemedText style={{ color: Colors[scheme].muted }}>12</ThemedText>
+                </View>
+              </View>
             </Card>
           ))}
         </ThemedView>
@@ -144,46 +218,43 @@ export default function MemorialDetail() {
 
       {tab === 'visits' && (
         <ThemedView lightColor="transparent" darkColor="transparent" style={styles.section}>
-          <ThemedText type="subtitle">Visit History</ThemedText>
+          <ThemedText type="title">Visit History</ThemedText>
           <Card>
-            <ThemedText>Recent visitors: 12 (simulated)</ThemedText>
             <ThemedText style={{ color: Colors[scheme].muted }}>Last visit: 2 days ago</ThemedText>
           </Card>
         </ThemedView>
       )}
 
-      {/* Services always available below */}
+      {/* Services in a horizontal row */}
       <ThemedView style={styles.section}>
-        <ThemedText type="subtitle">Services</ThemedText>
-        {serviceTypes.map((s) => (
-          <Card key={s.id}>
-            <View style={styles.rowBetween}>
-              <ThemedText>
-                {s.name} · {s.price}
-              </ThemedText>
-              <Link href={{ pathname: '/order/new', params: { memorialId: memorial.id, serviceId: s.id } }} asChild>
-                <View>
-                  <Button>Order</Button>
-                </View>
-              </Link>
+        <ThemedText type="title">Services</ThemedText>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12 }}>
+          {serviceTypes.map((s) => (
+            <View key={s.id} style={[styles.serviceCard, { borderColor: Colors[scheme].border, backgroundColor: Colors[scheme].card }]}> 
+              <View style={{ alignItems: 'center', marginBottom: 6 }}>
+                {s.image ? (
+                  <RNImage source={s.image} style={{ width: '100%', height: 88, borderRadius: 10 }} resizeMode="cover" />
+                ) : s.key.includes('cleaning') ? (
+                  <MaterialIcons name="cleaning-services" size={28} color={Colors[scheme].tint as any} />
+                ) : s.key.includes('flower') ? (
+                  <RNImage source={require('@/assets/images/flower.png')} style={{ width: 28, height: 28 }} />
+                ) : (
+                  <MaterialIcons name="miscellaneous-services" size={28} color={Colors[scheme].tint as any} />
+                )}
+              </View>
+              <ThemedText style={{ textAlign: 'center', fontWeight: '600' }}>{s.name}</ThemedText>
+              <ThemedText style={{ textAlign: 'center', color: Colors[scheme].muted }}>{s.price}</ThemedText>
+              {s.desc ? (
+                <ThemedText style={{ textAlign: 'center', marginTop: 4, color: Colors[scheme].muted }}>{s.desc}</ThemedText>
+              ) : null}
+              <View style={{ alignItems: 'center', marginTop: 8 }}>
+                <Link href={{ pathname: '/order/new', params: { memorialId: memorial.id, serviceId: s.id } }} asChild>
+                  <Button>Order now</Button>
+                </Link>
+              </View>
             </View>
-            <View style={{ marginTop: 8 }}>
-              <Link href={{ pathname: '/subscription/new', params: { memorialId: memorial.id } }} asChild>
-                <View>
-                  <Button variant="ghost">Subscribe (flowers/cleaning)</Button>
-                </View>
-              </Link>
-            </View>
-          </Card>
-        ))}
-      </ThemedView>
-
-      <ThemedView style={styles.section}>
-        <ThemedText type="subtitle">QR / Visitors</ThemedText>
-        <Card>
-          <ThemedText>QR tag linked: Yes (simulated)</ThemedText>
-          <ThemedText>Recent visitors: 12 (simulated)</ThemedText>
-        </Card>
+          ))}
+        </ScrollView>
       </ThemedView>
     </ScrollView>
     </ScreenBackground>
@@ -215,7 +286,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   name: { textAlign: 'center' },
-  section: { gap: 8 },
+  section: { gap: 8, marginBottom:20 },
   card: {
     padding: 12,
     borderWidth: StyleSheet.hairlineWidth,
@@ -236,4 +307,11 @@ const styles = StyleSheet.create({
   },
   tabButton: { flex: 1, alignItems: 'center', paddingVertical: 6 },
   rowBetween: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8 },
+  serviceCard: {
+    width: 160,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    marginBottom:30
+  },
 });

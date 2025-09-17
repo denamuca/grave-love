@@ -87,15 +87,6 @@ export const posts: Post[] = [
     created_at: '2024-11-02T12:00:00Z',
     author: 'Michael',
   },
-  {
-    id: 'p3',
-    memorial_id: 'm2',
-    type: 'photo',
-    text: 'At the school fundraiser, 2019',
-    media_url: 'https://picsum.photos/300/200',
-    created_at: '2024-10-20T09:30:00Z',
-    author: 'PTA',
-  },
   // Add a recent candle for Margaret to surface on cards
   {
     id: 'p4',

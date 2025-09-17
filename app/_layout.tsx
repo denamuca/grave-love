@@ -8,7 +8,7 @@ import { AppProvider } from '@/lib/store/AppContext';
 import { Colors, ForceDark } from '@/constants/theme';
 
 export const unstable_settings = {
-  anchor: '(main)',
+  initialRouteName: '(main)',
 };
 
 export default function RootLayout() {
@@ -20,7 +20,8 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerBackTitleVisible: false }}>
           <Stack.Screen name="(main)" options={{ headerShown: false }} />
           <Stack.Screen name="memorial/[id]" options={{
-            // Keep minimal back button; title is the header image
+            // Keep minimal back button and no title
+            headerTitle: '',
             headerBackTitle: '',
             headerBackTitleVisible: false,
             headerBackButtonDisplayMode: 'minimal',
