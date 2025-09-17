@@ -1,10 +1,12 @@
 import { ThemedText } from '@/components/themed-text';
 import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useApp } from '@/lib/store/AppContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { Link } from 'expo-router';
 import { Image as RNImage, StyleSheet, View } from 'react-native';
 
 type Props = {
@@ -34,10 +36,20 @@ function timeAgo(iso?: string) {
   return `${months} month${months === 1 ? '' : 's'} ago`;
 }
 
+function formatNiceDate(iso: string) {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  } catch {
+    return iso;
+  }
+}
+
 export function MemorialCard({ memorial, onPress }: Props) {
   const scheme = useColorScheme() ?? 'light';
-  const { posts } = useApp();
+  const { posts, serviceTypes, addPost } = useApp();
   const c = Colors[scheme];
+  const flowersService = serviceTypes.find((s) => s.key === 'flowers_standard');
 
   const latest = posts
     .filter((p) => p.memorial_id === memorial.id)
@@ -56,7 +68,7 @@ export function MemorialCard({ memorial, onPress }: Props) {
     : undefined;
 
   return (
-    <Card onPress={onPress} style={[styles.card, { borderColor: c.border, backgroundColor: c.card }]}>
+    <Card onPress={onPress} style={[styles.card, { borderColor: c.border, backgroundColor: c.card, marginBottom: 16 }]}>
       <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
         {/* Framed photo */}
         {memorial.cover_image ? (
@@ -70,9 +82,9 @@ export function MemorialCard({ memorial, onPress }: Props) {
         )}
 
         <View style={{ flex: 1, gap: 5  }}>
-          <ThemedText type="defaultSemiBold" style={{ fontSize: 22 }}>{memorial.name_full}</ThemedText>
-          <ThemedText style={{ color: c.silver, fontWeight: '700', fontSize: 18 }}>
-            {`${memorial.date_birth} · ${memorial.date_death}`}
+          <ThemedText type="defaultSemiBold" style={{ fontSize: 18 }}>{memorial.name_full}</ThemedText>
+          <ThemedText style={{ color: c.silver, fontWeight: '700', fontSize: 16 }}>
+            {`${formatNiceDate(memorial.date_birth)} · ${formatNiceDate(memorial.date_death)}`}
           </ThemedText>
           {memorial.cemetery ? (
             <ThemedText style={{ color: c.silver, fontWeight: '700' }}>
@@ -80,7 +92,7 @@ export function MemorialCard({ memorial, onPress }: Props) {
             </ThemedText>
           ) : null}
           {activity ? (
-            <View style={{ marginTop: 12 }}>
+            <View style={{ marginTop: 12, flexDirection: 'column', gap: 8 }}>
               <Badge
                 iconSource={activity.icon}
                 iconSize={20}
@@ -89,6 +101,20 @@ export function MemorialCard({ memorial, onPress }: Props) {
               >
                 {activity.label}
               </Badge>
+              {latest?.type === 'flowers' && flowersService ? (
+                <Link href={{ pathname: '/order/new', params: { memorialId: memorial.id, serviceId: flowersService.id } }} asChild>
+                  <Button variant="ghost" style={{ paddingVertical: 6, paddingHorizontal: 10 }}>Place again</Button>
+                </Link>
+              ) : null}
+              {latest?.type === 'candle' ? (
+                <Button
+                  variant="ghost"
+                  style={{ paddingVertical: 6, paddingHorizontal: 10 }}
+                  onPress={() => addPost({ memorial_id: memorial.id, type: 'candle', text: 'Lighting a candle in your memory' })}
+                >
+                  Light again
+                </Button>
+              ) : null}
             </View>
           ) : null}
         </View>

@@ -97,7 +97,7 @@ export default function FamilyHomeScreen() {
             <ThemedText style={{ fontSize: 18, ...(p.type === 'message' ? { color: '#1b141b' } : {}) }}>
               {p.text}
             </ThemedText>
-            <ThemedText style={{ opacity: 0.85, marginTop: 6, textAlign: 'center', ...(p.type === 'message' ? { color: '#321e1f' } : {}) }}>
+            <ThemedText style={{ opacity: 0.85, marginTop: 6, ...(p.type === 'message' ? { color: '#321e1f' } : {}) }}>
               {new Date(p.created_at).toDateString()}
             </ThemedText>
           </Card>

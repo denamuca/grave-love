@@ -29,6 +29,15 @@ export default function MemorialDetail() {
   const candleUntil = candlesByName?.[memorial.id] ?? null;
   const isNameCandleActive = !!(candleUntil && new Date(candleUntil).getTime() > Date.now());
 
+  function niceDate(iso: string) {
+    try {
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    } catch {
+      return iso;
+    }
+  }
+
   return (
     <ScreenBackground>
     <ScrollView contentContainerStyle={styles.container}>
@@ -63,7 +72,7 @@ export default function MemorialDetail() {
             <Button variant="ghost" onPress={() => startNameCandle(memorial.id)}>Place name candle ($3)</Button>
           )}
         </View>
-        <ThemedText style={{ color: Colors[scheme].muted }}>{`${memorial.date_birth} - ${memorial.date_death}`}</ThemedText>
+        <ThemedText style={{ color: Colors[scheme].muted }}>{`${niceDate(memorial.date_birth)} - ${niceDate(memorial.date_death)}`}</ThemedText>
         {memorial.cemetery ? (
           <ThemedText style={{ color: Colors[scheme].muted }}>Resting Place: {memorial.cemetery}{memorial.plot ? `, ${memorial.plot}` : ''}</ThemedText>
         ) : null}
