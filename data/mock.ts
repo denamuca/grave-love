@@ -13,7 +13,7 @@ export type Memorial = {
 export type Post = {
   id: string;
   memorial_id: string;
-  type: 'story' | 'photo' | 'video' | 'candle' | 'message' | 'flowers';
+  type: 'story' | 'photo' | 'video' | 'candle' | 'message' | 'flowers' | 'cleaning';
   text?: string;
   media_url?: string;
   created_at: string;
@@ -23,8 +23,17 @@ export type Post = {
 export type ServiceType = {
   id: string;
   name: string;
-  key: 'cleaning_basic' | 'flowers_standard';
+  key:
+    | 'cleaning_basic'
+    | 'flowers_standard'
+    | 'candle_name'
+    | 'photo_update'
+    | 'stone_polish'
+    | 'holiday_wreath'
+    | 'flag_placement';
   price: string;
+  desc?: string;
+  image?: any;
 };
 
 export type Job = {
@@ -63,6 +72,23 @@ export const memorials: Memorial[] = [
 ];
 
 export const posts: Post[] = [
+  // Examples to drive Visit History timeline
+  {
+    id: 'p6',
+    memorial_id: 'm1',
+    type: 'flowers',
+    text: "Purchased flowers for Walter's grave",
+    created_at: '2025-09-15T14:20:00Z',
+    author: 'Brian',
+  },
+  {
+    id: 'p7',
+    memorial_id: 'm1',
+    type: 'cleaning',
+    text: 'Cleaned and polished the tombstone',
+    created_at: '2025-09-10T09:30:00Z',
+    author: 'Steve',
+  },
   {
     id: 'p5',
     memorial_id: 'm1',
@@ -99,8 +125,11 @@ export const posts: Post[] = [
 ];
 
 export const serviceTypes: ServiceType[] = [
-  { id: 's1', key: 'cleaning_basic', name: 'Grave Cleaning (Basic)', price: '$40' },
-  { id: 's2', key: 'flowers_standard', name: 'Fresh Flowers (Standard)', price: '$35' },
+  { id: 's1', key: 'cleaning_basic', name: 'Grave Cleaning', price: '$40', desc: 'Wipe, sweep, and debris removal' },
+  { id: 's2', key: 'flowers_standard', name: 'Fresh Flowers', price: '$35', desc: 'Seasonal bouquet placed at the site' },
+  { id: 's3', key: 'candle_name', name: 'Name Candle', price: '$3', desc: 'Add a candle by their name' },
+  { id: 's4', key: 'photo_update', name: 'Photo Update', price: '$10', desc: 'We visit and send a fresh photo' },
+  { id: 's5', key: 'stone_polish', name: 'Headstone Polish', price: '$60', desc: 'Detail clean and polish of stone' },
 ];
 
 export const jobs: Job[] = [
