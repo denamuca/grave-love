@@ -23,5 +23,5 @@ export function Badge({ children, color, background, iconSource, iconSize = 14 }
 
 const styles = StyleSheet.create({
   badge: { flexDirection: 'row', alignItems: 'center', paddingVertical: 4, paddingHorizontal: 8, borderRadius: 8, borderWidth: StyleSheet.hairlineWidth },
-  text: { fontSize: 15, fontWeight: '700' },
+  text: { fontSize: 14, fontWeight: '600' },
 });

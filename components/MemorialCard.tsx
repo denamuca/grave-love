@@ -69,7 +69,7 @@ export function MemorialCard({ memorial, onPress }: Props) {
           </View>
         )}
 
-        <View style={{ flex: 1, gap: 10 }}>
+        <View style={{ flex: 1, gap: 5  }}>
           <ThemedText type="defaultSemiBold" style={{ fontSize: 22 }}>{memorial.name_full}</ThemedText>
           <ThemedText style={{ color: c.silver, fontWeight: '700', fontSize: 18 }}>
             {`${memorial.date_birth} · ${memorial.date_death}`}
@@ -93,7 +93,7 @@ export function MemorialCard({ memorial, onPress }: Props) {
           ) : null}
         </View>
 
-        <MaterialIcons name="chevron-right" size={22} color={c.muted as any} />
+        <MaterialIcons name="chevron-right" size={20} color={c.muted as any} />
       </View>
     </Card>
   );
