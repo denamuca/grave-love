@@ -13,7 +13,7 @@ export type Memorial = {
 export type Post = {
   id: string;
   memorial_id: string;
-  type: 'story' | 'photo' | 'video' | 'candle' | 'message';
+  type: 'story' | 'photo' | 'video' | 'candle' | 'message' | 'flowers';
   text?: string;
   media_url?: string;
   created_at: string;
@@ -64,6 +64,14 @@ export const memorials: Memorial[] = [
 
 export const posts: Post[] = [
   {
+    id: 'p5',
+    memorial_id: 'm1',
+    type: 'flowers',
+    text: 'Roses placed at your resting place',
+    created_at: '2025-10-15T10:00:00Z',
+    author: 'You',
+  },
+  {
     id: 'p1',
     memorial_id: 'm1',
     type: 'candle',
@@ -87,6 +95,15 @@ export const posts: Post[] = [
     media_url: 'https://picsum.photos/300/200',
     created_at: '2024-10-20T09:30:00Z',
     author: 'PTA',
+  },
+  // Add a recent candle for Margaret to surface on cards
+  {
+    id: 'p4',
+    memorial_id: 'm2',
+    type: 'candle',
+    text: 'Lighting a candle in your memory',
+    created_at: '2025-06-01T12:00:00Z',
+    author: 'Family',
   },
 ];
 

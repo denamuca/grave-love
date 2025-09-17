@@ -1,5 +1,6 @@
 import type { PropsWithChildren, ReactElement } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
   interpolate,
   useAnimatedRef,
@@ -10,6 +11,7 @@ import Animated, {
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { Colors } from '@/constants/theme';
 
 const HEADER_HEIGHT = 250;
 
@@ -25,8 +27,8 @@ export default function ParallaxScrollView({
   headerBackgroundColor,
   headerHeight = HEADER_HEIGHT,
 }: Props) {
-  const backgroundColor = useThemeColor({}, 'background');
   const colorScheme = useColorScheme() ?? 'light';
+  const grad = Colors[colorScheme].gradient as { start: string; end: string };
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollOffset(scrollRef);
   const headerAnimatedStyle = useAnimatedStyle(() => {
@@ -47,10 +49,17 @@ export default function ParallaxScrollView({
   });
 
   return (
-    <Animated.ScrollView
-      ref={scrollRef}
-      style={{ backgroundColor, flex: 1 }}
-      scrollEventThrottle={16}>
+    <View style={{ flex: 1 }}>
+      <LinearGradient
+        colors={[grad.start, grad.end]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={StyleSheet.absoluteFillObject}
+      />
+      <Animated.ScrollView
+        ref={scrollRef}
+        style={{ backgroundColor: 'transparent', flex: 1 }}
+        scrollEventThrottle={16}>
       <Animated.View
         style={[
           styles.header,
@@ -60,8 +69,9 @@ export default function ParallaxScrollView({
         ]}>
         {headerImage}
       </Animated.View>
-      <ThemedView style={styles.content}>{children}</ThemedView>
+      <ThemedView lightColor="transparent" darkColor="transparent" style={styles.content}>{children}</ThemedView>
     </Animated.ScrollView>
+    </View>
   );
 }
 

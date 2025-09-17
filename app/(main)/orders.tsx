@@ -1,9 +1,10 @@
-import { useApp } from '@/lib/store/AppContext';
-import { ThemedView } from '@/components/themed-view';
+import ScreenBackground from '@/components/screen-background';
 import { ThemedText } from '@/components/themed-text';
-import { Card } from '@/components/ui/Card';
+import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/Button';
-import { StyleSheet, View } from 'react-native';
+import { Card } from '@/components/ui/Card';
+import { useApp } from '@/lib/store/AppContext';
+import { Image, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function OrdersScreen() {
@@ -18,7 +19,11 @@ export default function OrdersScreen() {
   }
 
   return (
-    <ThemedView style={[styles.container, { paddingTop: insets.top + 12 }] }>
+    <ScreenBackground>
+    <ThemedView lightColor="transparent" darkColor="transparent" style={[styles.container, { paddingTop: insets.top + 12 }] }>
+      <View style={{ alignItems: 'center' }}>
+        <Image source={require('@/assets/images/grave_love_header.png')} style={{ width: 160, height: 80, marginBottom: 6 }} resizeMode="contain" />
+      </View>
       <ThemedText type="title" style={{ textAlign: 'center' }}>Orders</ThemedText>
       {orders.length === 0 ? (
         <ThemedText style={{ opacity: 0.7 }}>No orders yet. Place one from a memorial.</ThemedText>
@@ -39,6 +44,7 @@ export default function OrdersScreen() {
         </Card>
       ))}
     </ThemedView>
+    </ScreenBackground>
   );
 }
 

@@ -20,8 +20,7 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerBackTitleVisible: false }}>
           <Stack.Screen name="(main)" options={{ headerShown: false }} />
           <Stack.Screen name="memorial/[id]" options={{
-            // Show only the back chevron — no title or back label
-            headerTitle: '',
+            // Keep minimal back button; title is the header image
             headerBackTitle: '',
             headerBackTitleVisible: false,
             headerBackButtonDisplayMode: 'minimal',

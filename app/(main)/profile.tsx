@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { Switch, StyleSheet, View } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Link } from 'expo-router';
-import { Button } from '@/components/ui/Button';
+import { useState } from 'react';
+import { Image, StyleSheet, Switch, View } from 'react-native';
+import ScreenBackground from '@/components/screen-background';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ProfileScreen() {
@@ -14,7 +15,11 @@ export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
 
   return (
-    <ThemedView style={[styles.container, { paddingTop: insets.top + 12 }] }>
+    <ScreenBackground>
+    <ThemedView lightColor="transparent" darkColor="transparent" style={[styles.container, { paddingTop: insets.top + 12 }] }>
+      <View style={{ alignItems: 'center' }}>
+        <Image source={require('@/assets/images/grave_love_header.png')} style={{ width: 160, height: 80, marginBottom: 6 }} resizeMode="contain" />
+      </View>
       <ThemedText type="title" style={{ textAlign: 'center' }}>Profile & Reminders</ThemedText>
       <Card>
         <View style={styles.row}>
@@ -37,6 +42,7 @@ export default function ProfileScreen() {
         Changes are local-only in this prototype. No data is stored.
       </ThemedText>
     </ThemedView>
+    </ScreenBackground>
   );
 }
 

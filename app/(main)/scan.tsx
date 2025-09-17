@@ -7,7 +7,8 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useApp } from '@/lib/store/AppContext';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import ScreenBackground from '@/components/screen-background';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ScanScreen() {
@@ -17,7 +18,11 @@ export default function ScanScreen() {
   const insets = useSafeAreaInsets();
 
   return (
-    <ThemedView style={[styles.container, { paddingTop: insets.top + 44 }] }>
+    <ScreenBackground>
+    <ThemedView lightColor="transparent" darkColor="transparent" style={[styles.container, { paddingTop: insets.top + 44 }] }>
+      <View style={{ alignItems: 'center' }}>
+        <Image source={require('@/assets/images/grave_love_header.png')} style={{ width: 160, height: 80, marginBottom: 6 }} resizeMode="contain" />
+      </View>
       <View style={[styles.hero, { backgroundColor: Colors[scheme].card }]}> 
         <ThemedText type="title">Scan QR</ThemedText>
         <ThemedText style={{ opacity: 0.8, textAlign: 'center' }}>
@@ -67,6 +72,7 @@ export default function ScanScreen() {
         If this code isn’t linked yet, you’ll create a new memorial.
       </ThemedText>
     </ThemedView>
+    </ScreenBackground>
   );
 }
 

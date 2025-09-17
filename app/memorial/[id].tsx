@@ -9,6 +9,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Link, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, Image as RNImage, ScrollView, StyleSheet, View } from 'react-native';
+import ScreenBackground from '@/components/screen-background';
 
 export default function MemorialDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -21,12 +22,13 @@ export default function MemorialDetail() {
 
   // Ensure the header shows only a back button (no title/label)
   useEffect(() => {
-    navigation.setOptions?.({ headerTitle: '', headerBackTitle: '', headerBackTitleVisible: false });
+    navigation.setOptions?.({ headerBackTitle: '', headerBackTitleVisible: false });
   }, [navigation]);
 
   return (
+    <ScreenBackground>
     <ScrollView contentContainerStyle={styles.container}>
-      <ThemedView style={styles.header}>
+      <ThemedView lightColor="transparent" darkColor="transparent" style={styles.header}>
         <View style={styles.portraitWrap}>
           <RNImage
             source={
@@ -37,8 +39,8 @@ export default function MemorialDetail() {
             style={styles.portrait}
           />
           <View style={[styles.candleBadge, { backgroundColor: Colors[scheme].card, borderColor: Colors[scheme].border }] }>
-            <View style={[styles.candleInner, { backgroundColor: Colors[scheme].gold }]}>
-              <MaterialIcons name="local-fire-department" color={Colors[scheme].background} size={14} />
+            <View style={[styles.candleInner, { backgroundColor: Colors[scheme].gold }] }>
+              <RNImage source={require('@/assets/images/candle.png')} style={{ width: 18, height: 18 }} />
             </View>
           </View>
         </View>
@@ -76,7 +78,7 @@ export default function MemorialDetail() {
       </ThemedView>
 
       {tab === 'wall' && (
-        <ThemedView style={styles.section}>
+        <ThemedView lightColor="transparent" darkColor="transparent" style={styles.section}>
           <ThemedText type="subtitle">Memorial Wall</ThemedText>
           <Card>
             <View style={styles.rowBetween}>
@@ -94,7 +96,16 @@ export default function MemorialDetail() {
           </Card>
           {timeline.map((p) => (
             <Card key={p.id}>
-              <ThemedText type="defaultSemiBold">{p.type.toUpperCase()}</ThemedText>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                {p.type === 'candle' ? (
+                  <RNImage source={require('@/assets/images/candle.png')} style={{ width: 20, height: 20 }} />
+                ) : p.type === 'message' ? (
+                  <RNImage source={require('@/assets/images/message.png')} style={{ width: 20, height: 20 }} />
+                ) : p.type === 'flowers' ? (
+                  <RNImage source={require('@/assets/images/flower.png')} style={{ width: 20, height: 20 }} />
+                ) : null}
+                <ThemedText type="defaultSemiBold">{p.type.toUpperCase()}</ThemedText>
+              </View>
               <ThemedText>{p.text}</ThemedText>
               {p.media_url ? (
                 <RNImage source={{ uri: p.media_url }} style={{ height: 160, borderRadius: 8, marginTop: 8 }} />
@@ -105,11 +116,20 @@ export default function MemorialDetail() {
       )}
 
       {tab === 'timeline' && (
-        <ThemedView style={styles.section}>
+        <ThemedView lightColor="transparent" darkColor="transparent" style={styles.section}>
           <ThemedText type="subtitle">Family Timeline</ThemedText>
           {timeline.map((p) => (
             <Card key={p.id}>
-              <ThemedText type="defaultSemiBold">{p.type.toUpperCase()}</ThemedText>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                {p.type === 'candle' ? (
+                  <RNImage source={require('@/assets/images/candle.png')} style={{ width: 20, height: 20 }} />
+                ) : p.type === 'message' ? (
+                  <RNImage source={require('@/assets/images/message.png')} style={{ width: 20, height: 20 }} />
+                ) : p.type === 'flowers' ? (
+                  <RNImage source={require('@/assets/images/flower.png')} style={{ width: 20, height: 20 }} />
+                ) : null}
+                <ThemedText type="defaultSemiBold">{p.type.toUpperCase()}</ThemedText>
+              </View>
               <ThemedText>{p.text}</ThemedText>
               <ThemedText style={{ color: Colors[scheme].muted, marginTop: 4 }}>
                 {new Date(p.created_at).toDateString()}{p.author ? ` · ${p.author}` : ''}
@@ -123,7 +143,7 @@ export default function MemorialDetail() {
       )}
 
       {tab === 'visits' && (
-        <ThemedView style={styles.section}>
+        <ThemedView lightColor="transparent" darkColor="transparent" style={styles.section}>
           <ThemedText type="subtitle">Visit History</ThemedText>
           <Card>
             <ThemedText>Recent visitors: 12 (simulated)</ThemedText>
@@ -166,6 +186,7 @@ export default function MemorialDetail() {
         </Card>
       </ThemedView>
     </ScrollView>
+    </ScreenBackground>
   );
 }
 

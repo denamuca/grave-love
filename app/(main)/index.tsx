@@ -1,70 +1,100 @@
+import MemorialCard from '@/components/MemorialCard';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import LottieOverlay from '@/components/ui/LottieOverlay';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useApp } from '@/lib/store/AppContext';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { useMemo } from 'react';
-import { Image as RNImage, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
 export default function FamilyHomeScreen() {
   const scheme = useColorScheme() ?? 'light';
   const { memorials, posts } = useApp();
-  const recentPosts = useMemo(() => posts.slice(0, 3), [posts]);
+  const recentPosts = useMemo(() => {
+    return [...posts].sort((a, b) => (a.created_at < b.created_at ? 1 : -1)).slice(0, 3);
+  }, [posts]);
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: Colors[scheme].background, dark: Colors[scheme].background }}
+      headerBackgroundColor={{ light: 'transparent', dark: 'transparent' }}
       headerHeight={100}
       headerImage={<View />}
     >
-      <ThemedView style={styles.section}>
-        <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center', paddingRight: 100, marginBottom:20 }}>
+      {/* Brand header image above section titles */}
+      <View style={{ alignItems: 'center', marginTop: 4, marginBottom: 6 }}>
+        <Image
+          source={require('@/assets/images/grave_love_header.png')}
+          style={{ width: 160, height: 80 }}
+          resizeMode="contain"
+        />
+      </View>
+      <ThemedView lightColor="transparent" darkColor="transparent" style={styles.section}>
+        <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center', marginBottom:20 }}>
           <ThemedText type="title" style={{ textAlign: 'center' }}>Your Memorials</ThemedText>
-          <Link href="/memorial/create" asChild>
-            <View style={{ position: 'absolute', right: 0, top: 0,  }}>
-              <Button variant="ghost">+ Create</Button>
-            </View>
-          </Link>
         </View>
         {memorials.map((item) => (
-          <Link key={item.id} href={{ pathname: '/memorial/[id]', params: { id: item.id } }} asChild>
-            <Card>
-              <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-                {item.cover_image ? (
-                  <RNImage source={item.cover_image} style={[styles.avatar, { borderColor: Colors[scheme].border }]} />
-                ) : (
-                  <View style={[styles.avatar, { alignItems: 'center', justifyContent: 'center', backgroundColor: Colors[scheme].card, borderColor: Colors[scheme].border }]}>
-                    <MaterialIcons name="person" size={26} color={Colors[scheme].tint as any} />
-                  </View>
-                )}
-                <View style={{ flex: 1, gap: 2 }}>
-                  <ThemedText type="defaultSemiBold">{item.name_full}</ThemedText>
-                  <ThemedText style={{ color: Colors[scheme].muted }}>{`${item.date_birth} · ${item.date_death}`}</ThemedText>
-                  {item.cemetery ? (
-                    <ThemedText style={{ color: Colors[scheme].muted }}>{item.cemetery}</ThemedText>
-                  ) : null}
-                </View>
-                <IconSymbol name="chevron.right" size={20} color={Colors[scheme].muted} />
-              </View>
-            </Card>
-          </Link>
+          <MemorialCard
+            key={item.id}
+            memorial={item}
+            onPress={() => router.push({ pathname: '/memorial/[id]', params: { id: item.id } })}
+          />
         ))}
       </ThemedView>
 
-      <ThemedView style={styles.section}>
+      <ThemedView lightColor="transparent" darkColor="transparent" style={styles.section}>
         <ThemedText type="title">Recent Activity</ThemedText>
         {recentPosts.map((p) => (
-          <Card key={p.id}>
-            <ThemedText type="defaultSemiBold" style={{ marginBottom: 4 }}>
-              {p.type.toUpperCase()}
-            </ThemedText>
-            <ThemedText>{p.text}</ThemedText>
+          <Card
+            key={p.id}
+            style={
+              p.type === 'message'
+                ? {
+                    // richer gold tint in both modes
+                    backgroundColor:
+                      scheme === 'dark'
+                        ? 'rgba(242, 193, 90, 0.18)'
+                        : 'rgba(242, 193, 90, 0.22)',
+                    borderColor: Colors[scheme].gold,
+                    // gentle gold glow
+                    shadowColor: Colors[scheme].gold,
+                    shadowOpacity: 0.25,
+                    shadowRadius: 10,
+                    shadowOffset: { width: 0, height: 4 },
+                    elevation: 3,
+                  }
+                : undefined
+            }>
+            {p.type === 'candle' ? (
+              <LottieOverlay
+                source={require('@/assets/lottie/candle_giff.json')}
+                width={80}
+                height={90}
+                style={{ position: 'absolute', right: 4, bottom: 10 }}
+              />
+            ) : p.type === 'message' ? (
+              <LottieOverlay
+                source={require('@/assets/lottie/message.json')}
+                width={80}
+                height={80}
+                style={{ position: 'absolute', right: 4, bottom: 10 }}
+              />
+            ) : p.type === 'flowers' ? (
+              <LottieOverlay
+                source={require('@/assets/lottie/flower_giff.json')}
+                width={80}
+                height={80}
+                style={{ position: 'absolute', right: 4, bottom: 10 }}
+                // fallbackSource={require('@/assets/images/flower.png')}
+              />
+            ) : null}
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4, paddingRight: (p.type === 'candle' || p.type === 'message' || p.type === 'flowers') ? 96 : 0 }}>
+              <ThemedText style={{fontSize:20}} type="defaultSemiBold">{p.type.toUpperCase()}</ThemedText>
+            </View>
+            <ThemedText style={{fontSize:18}}>{p.text}</ThemedText>
             <ThemedText style={{ opacity: 0.7, marginTop: 6 }}>
               {new Date(p.created_at).toDateString()}
             </ThemedText>
