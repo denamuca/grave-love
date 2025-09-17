@@ -68,7 +68,7 @@ export const posts: Post[] = [
     memorial_id: 'm1',
     type: 'flowers',
     text: 'Roses placed at your resting place',
-    created_at: '2025-10-15T10:00:00Z',
+    created_at: '2025-08-15T10:00:00Z',
     author: 'You',
   },
   {

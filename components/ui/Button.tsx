@@ -16,7 +16,7 @@ export function Button({ children, onPress, style, variant = 'primary', disabled
   const scheme = useColorScheme() ?? 'dark';
   const bg = variant === 'primary' ? Colors[scheme].tint : 'transparent';
   const border = variant === 'primary' ? 'transparent' : Colors[scheme].tint;
-  const textColor = variant === 'primary' ? '#FFFFFF' : Colors[scheme].tint;
+  const textColor = variant === 'primary' ? Colors[scheme].text : Colors[scheme].tint;
 
   return (
     <Pressable

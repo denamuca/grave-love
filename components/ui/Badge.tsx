@@ -10,7 +10,7 @@ export function Badge({ children, color, background, iconSource, iconSize = 14 }
   const scheme = useColorScheme() ?? 'dark';
   const tint = Colors[scheme].tint;
   const fg = color ?? tint;
-  const bg = background ?? 'rgba(200,161,75,0.18)';
+  const bg = background ?? 'rgba(199,169,141,0.18)';
   return (
     <View style={[styles.badge, { backgroundColor: bg, borderColor: tint }]}> 
       {iconSource ? (

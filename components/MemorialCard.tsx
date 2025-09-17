@@ -84,7 +84,7 @@ export function MemorialCard({ memorial, onPress }: Props) {
               <Badge
                 iconSource={activity.icon}
                 iconSize={20}
-                background={scheme === 'dark' ? 'rgba(216,195,154,0.18)' : 'rgba(216,195,154,0.18)'}
+                background={scheme === 'dark' ? 'rgba(199,169,141,0.18)' : 'rgba(199,169,141,0.18)'}
                 color={c.tint as any}
               >
                 {activity.label}

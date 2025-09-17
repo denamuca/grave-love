@@ -8,7 +8,7 @@ import { Platform } from 'react-native';
 const accentBlue = '#3a7ca5';
 const accentPurple = '#7C3AED';
 // Brand tones
-const brandGold = '#D8C39A';
+const brandGold = '#c7a98d';
 const brandGoldSoft = '#EADFCC';
 const brandSilver = '#C9CCD6';
 const silverLight = '#667085';
@@ -25,8 +25,8 @@ const mutedGray = '#6B7280';
 const gold = '#F2C15A';
 const glow = '#FADCA0';
 
-// Do not force dark; allow system/light
-export const ForceDark = false;
+// Force the app to use dark mode only
+export const ForceDark = true;
 
 export const Colors = {
   light: {
@@ -48,14 +48,14 @@ export const Colors = {
     gradient: { start: '#EAF0FF', end: '#FFFFFF' },
   },
   dark: {
-    // Keep existing pleasant dark for users on dark mode
-    text: '#EDEEF1',
-    background: midnight,
+    // Dark theme palette (locked)
+    text: '#cccabe',
+    background: '#1b141b',
     tint: brandGold,
     icon: '#8C919A',
     tabIconDefault: '#6F7480',
     tabIconSelected: brandGold,
-    card: '#141821',
+    card: '#0e0d12',
     border: '#262C36',
     muted: '#A0A4AA',
     gold,
@@ -64,8 +64,8 @@ export const Colors = {
     silver: brandSilver,
     ivory: brandGoldSoft,
     glow,
-    // black to soft blue
-    gradient: { start: '#000000', end: '#1F3B73' },
+    // Background gradient: light black to brown
+    gradient: { start: '#1b141b', end: '#321e1f' },
   },
 };
 

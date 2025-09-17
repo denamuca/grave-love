@@ -21,7 +21,7 @@ export default function FamilyHomeScreen() {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: 'transparent', dark: 'transparent' }}
-      headerHeight={100}
+      headerHeight={40}
       headerImage={<View />}
     >
       {/* Brand header image above section titles */}
@@ -53,13 +53,8 @@ export default function FamilyHomeScreen() {
             style={
               p.type === 'message'
                 ? {
-                    // richer gold tint in both modes
-                    backgroundColor:
-                      scheme === 'dark'
-                        ? 'rgba(242, 193, 90, 0.18)'
-                        : 'rgba(242, 193, 90, 0.22)',
+                    backgroundColor: '#c2a387',
                     borderColor: Colors[scheme].gold,
-                    // gentle gold glow
                     shadowColor: Colors[scheme].gold,
                     shadowOpacity: 0.25,
                     shadowRadius: 10,
@@ -92,10 +87,17 @@ export default function FamilyHomeScreen() {
               />
             ) : null}
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4, paddingRight: (p.type === 'candle' || p.type === 'message' || p.type === 'flowers') ? 96 : 0 }}>
-              <ThemedText style={{fontSize:20, fontWeight: 'bold'}} type="defaultSemiBold">{p.type.toUpperCase()}</ThemedText>
+              <ThemedText
+                style={{ fontSize: 20, fontWeight: 'bold', ...(p.type === 'message' ? { color: '#1b141b' } : {}) }}
+                type="defaultSemiBold"
+              >
+                {p.type.toUpperCase()}
+              </ThemedText>
             </View>
-            <ThemedText style={{fontSize:18}}>{p.text}</ThemedText>
-            <ThemedText style={{ opacity: 0.7, marginTop: 6 , textAlign: 'center'}}>
+            <ThemedText style={{ fontSize: 18, ...(p.type === 'message' ? { color: '#1b141b' } : {}) }}>
+              {p.text}
+            </ThemedText>
+            <ThemedText style={{ opacity: 0.85, marginTop: 6, textAlign: 'center', ...(p.type === 'message' ? { color: '#321e1f' } : {}) }}>
               {new Date(p.created_at).toDateString()}
             </ThemedText>
           </Card>

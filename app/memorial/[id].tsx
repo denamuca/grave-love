@@ -116,7 +116,7 @@ export default function MemorialDetail() {
             const isMessage = p.type === 'message';
             const postStyle = isMessage
               ? {
-                  backgroundColor: scheme === 'dark' ? 'rgba(234, 223, 204, 0.10)' : Colors[scheme].ivory,
+                  backgroundColor: '#c2a387',
                   borderColor: Colors[scheme].gold,
                 }
               : undefined;
@@ -148,12 +148,19 @@ export default function MemorialDetail() {
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: (p.type === 'candle' || p.type === 'message' || p.type === 'flowers') ? 80 : 0 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                    <ThemedText style={{ fontWeight: 'bold', fontSize: 20 }} type="defaultSemiBold">{p.type.toUpperCase()}</ThemedText>
+                    <ThemedText
+                      style={{ fontWeight: 'bold', fontSize: 20, ...(isMessage ? { color: '#1b141b' } : {}) }}
+                      type="defaultSemiBold"
+                    >
+                      {p.type.toUpperCase()}
+                    </ThemedText>
                   </View>
-                  <ThemedText style={{ color: Colors[scheme].muted,}}>{new Date(p.created_at).toDateString()}</ThemedText>
+                  <ThemedText style={{ color: isMessage ? '#321e1f' : Colors[scheme].muted }}>
+                    {new Date(p.created_at).toDateString()}
+                  </ThemedText>
                 </View>
                 {p.text ? (
-                  <ThemedText style={{ marginTop: 6 }}>{p.text}</ThemedText>
+                  <ThemedText style={{ marginTop: 6, ...(isMessage ? { color: '#1b141b' } : {}) }}>{p.text}</ThemedText>
                 ) : null}
                 {p.media_url ? (
                   <RNImage source={{ uri: p.media_url }} style={{ height: 160, borderRadius: 8, marginTop: 8 }} />
