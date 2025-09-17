@@ -31,6 +31,7 @@ type State = {
   orders: Order[];
   subscriptions: Subscription[];
   reminders: Record<string, { birthday: boolean; passing: boolean; religious: boolean }>; // per memorial
+  candlesByName: Record<string, string>; // memorial_id -> ISO until
 };
 
 type Action =
@@ -39,7 +40,8 @@ type Action =
   | { type: 'CREATE_ORDER'; payload: Order }
   | { type: 'UPDATE_ORDER_STATUS'; payload: { id: string; status: Order['status'] } }
   | { type: 'ADD_SUBSCRIPTION'; payload: Subscription }
-  | { type: 'SET_REMINDERS'; payload: { memorial_id: string; values: Partial<State['reminders'][string]> } };
+  | { type: 'SET_REMINDERS'; payload: { memorial_id: string; values: Partial<State['reminders'][string]> } }
+  | { type: 'SET_NAME_CANDLE'; payload: { memorial_id: string; until: string } };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -69,6 +71,11 @@ function reducer(state: State, action: Action): State {
           },
         },
       };
+    case 'SET_NAME_CANDLE':
+      return {
+        ...state,
+        candlesByName: { ...state.candlesByName, [action.payload.memorial_id]: action.payload.until },
+      };
     default:
       return state;
   }
@@ -81,6 +88,7 @@ const initial: State = {
   orders: [],
   subscriptions: [],
   reminders: {},
+  candlesByName: {},
 };
 
 type Ctx = State & {
@@ -90,6 +98,7 @@ type Ctx = State & {
   setOrderCompleted: (id: string) => void;
   addSubscription: (s: Omit<Subscription, 'id' | 'status'>) => Subscription;
   setReminders: (memorial_id: string, values: Partial<State['reminders'][string]>) => void;
+  startNameCandle: (memorial_id: string, hours?: number) => string; // returns until ISO
 };
 
 const AppContext = createContext<Ctx | null>(null);
@@ -104,6 +113,7 @@ export function AppProvider({ children }: PropsWithChildren<{}>) {
 
     return {
       ...state,
+      candlesByName: state.candlesByName,
       addMemorial: (m) => {
         const newM: Memorial = { ...m, id: uid('m') } as Memorial;
         dispatch({ type: 'ADD_MEMORIAL', payload: newM });
@@ -132,6 +142,11 @@ export function AppProvider({ children }: PropsWithChildren<{}>) {
         return newS;
       },
       setReminders: (memorial_id, values) => dispatch({ type: 'SET_REMINDERS', payload: { memorial_id, values } }),
+      startNameCandle: (memorial_id, hours = 24) => {
+        const until = new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
+        dispatch({ type: 'SET_NAME_CANDLE', payload: { memorial_id, until } });
+        return until;
+      },
     };
   }, [state]);
 
@@ -143,4 +158,3 @@ export function useApp() {
   if (!ctx) throw new Error('AppProvider missing');
   return ctx;
 }
-

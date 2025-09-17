@@ -18,7 +18,7 @@ const softBackground = '#F4F6F9';
 const ivory = '#F7F3E8';
 const cardWhite = '#FFFFFF';
 const borderLight = '#E5E7EB';
-const textDark = '#1F2937';
+const textDark = '#fff';
 const mutedGray = '#6B7280';
 
 // Candle gold accent used sparingly

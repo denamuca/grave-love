@@ -1,8 +1,8 @@
-import { PropsWithChildren } from 'react';
-import { Pressable, StyleProp, StyleSheet, TextStyle, ViewStyle } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { PropsWithChildren } from 'react';
+import { Pressable, StyleProp, StyleSheet, TextStyle, ViewStyle } from 'react-native';
 
 type ButtonProps = PropsWithChildren<{
   onPress?: () => void;
@@ -28,7 +28,7 @@ export function Button({ children, onPress, style, variant = 'primary', disabled
         { backgroundColor: bg, borderColor: border, opacity: disabled ? 0.6 : pressed ? 0.85 : 1 },
         style,
       ]}>
-      <ThemedText style={[styles.text, { color: textColor } as TextStyle]}>{children}</ThemedText>
+      <ThemedText style={[styles.text, { color: '#fff' } as TextStyle]}>{children}</ThemedText>
     </Pressable>
   );
 }
