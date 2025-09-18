@@ -135,7 +135,7 @@ export default function MemorialDetail() {
               Candle burning until {new Date(candleUntil!).toDateString()}
             </ThemedText>
           ) : (
-            <Button variant="ghost" onPress={() => startNameCandle(memorial.id)}>Place name candle ($3)</Button>
+            <Button variant="ghost" onPress={() => startNameCandle(memorial.id)}>Place name candle</Button>
           )}
         </View>
         <ThemedText style={{ color: Colors[scheme].muted }}>{`${niceDate(memorial.date_birth)} - ${niceDate(memorial.date_death)}`}</ThemedText>
@@ -370,7 +370,7 @@ export default function MemorialDetail() {
                   )}
                 </View>
                 <ThemedText style={{ textAlign: 'center', fontWeight: '600' }}>{s.name}</ThemedText>
-                <ThemedText style={{ textAlign: 'center', color: Colors[scheme].muted }}>{s.price}</ThemedText>
+                {/* <ThemedText style={{ textAlign: 'center', color: Colors[scheme].muted }}>{s.price}</ThemedText> */}
                 {s.desc ? (
                   <ThemedText style={{ textAlign: 'center', marginTop: 4, color: Colors[scheme].muted }}>{s.desc}</ThemedText>
                 ) : null}
