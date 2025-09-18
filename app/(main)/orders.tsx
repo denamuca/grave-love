@@ -26,7 +26,7 @@ export default function OrdersScreen() {
       </View>
       <ThemedText type="title" style={{ textAlign: 'center' }}>Orders</ThemedText>
       {orders.length === 0 ? (
-        <ThemedText style={{ opacity: 0.7 }}>No orders yet. Place one from a memorial.</ThemedText>
+        <ThemedText style={{ textAlign: 'center' }}>No orders yet. Place one from a memorial.</ThemedText>
       ) : null}
       {orders.map((o) => (
         <Card key={o.id}>
