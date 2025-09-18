@@ -32,10 +32,10 @@ export default function HomeScreen() {
               textAlign: 'left',
             }}
           >
-            Grave Love helps families care for the resting places of loved ones,
+            Grave Love helps families care for the resting places of loved ones, no matter where they are.
           </ThemedText>
           <ThemedText style={{ marginTop: 10, color: Colors[scheme].muted }}>
-            no matter where they are. From fresh flowers to regular cleaning, our services keep
+            From fresh flowers to regular cleaning, our services keep
             memories alive with dignity and love.
           </ThemedText>
         </ThemedView>
@@ -64,27 +64,27 @@ export default function HomeScreen() {
           <ThemedText style={{ fontFamily: Fonts.display, fontSize: 28 }}>How It Works</ThemedText>
         </ThemedView>
         <View style={{ flexDirection: 'row', gap: 12, paddingHorizontal: 12, marginTop: 8 }}>
-        <Card style={[styles.stepCard, { alignSelf: 'stretch', backgroundColor:"transparent" }] }>
+        <Card style={[styles.stepCard, { alignSelf: 'stretch', backgroundColor:"transparent", padding:10 }] }>
             <ThemedText type="defaultSemiBold" style={styles.stepNumber}>1</ThemedText>
-            <View>
+            <View style={styles.stepContent}>
               <ThemedText type="defaultSemiBold">Select a Service</ThemedText>
               <ThemedText style={styles.serviceText}>Choose a service</ThemedText>
             </View>
             
           </Card>
-          <Card style={[styles.stepCard, { alignSelf: 'stretch', backgroundColor:"transparent" }] }>
+          <Card style={[styles.stepCard, { alignSelf: 'stretch', backgroundColor:"transparent", padding:10 }] }>
             <ThemedText type="defaultSemiBold" style={styles.stepNumber}>2</ThemedText>
-            <View>
+            <View style={styles.stepContent}>
               <ThemedText type="defaultSemiBold">Receive Updates</ThemedText>
-              <ThemedText style={styles.serviceText}>Photos and completion notices</ThemedText>
+              <ThemedText style={styles.serviceText}>Photos & completion notices</ThemedText>
             </View>
            
           </Card>
         </View>
         <View style={{ paddingHorizontal: 12 }}>
-          <Card style={[styles.stepCard, { alignItems: 'center',justifyContent:'center', backgroundColor:"transparent" }] }>
+          <Card style={[styles.stepCard, { alignItems: 'center',justifyContent:'center', backgroundColor:"transparent" , padding:10}] }>
             <ThemedText type="defaultSemiBold" style={styles.stepNumber}>3</ThemedText>
-            <View>
+            <View style={styles.stepContent}>
               <ThemedText type="defaultSemiBold">Personalize & Schedule</ThemedText>
               <ThemedText style={styles.serviceText}>Add notes, photos and select a date</ThemedText>
             </View>
@@ -128,9 +128,9 @@ const styles = StyleSheet.create({
   },
   stepCard: {
     flex: 1,
-    // gap: 2,
+    gap: 10,
     alignItems:'flex-start',
-    flexDirection:"row"
+    flexDirection:"row",  
   },
   stepNumber: {
     color: '#fff',
@@ -140,5 +140,9 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     alignSelf: 'flex-start',
     marginBottom: 6,
+  },
+  stepContent: {
+    flex: 1,
+    minWidth: 0,
   },
 });
