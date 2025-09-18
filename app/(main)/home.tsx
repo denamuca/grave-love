@@ -29,12 +29,12 @@ export default function HomeScreen() {
               fontFamily: Fonts.display,
               fontSize: 32,
               lineHeight: 38,
-              textAlign: 'left',
+              textAlign: 'center',
             }}
           >
             Grave Love helps families care for the resting places of loved ones, no matter where they are.
           </ThemedText>
-          <ThemedText style={{ marginTop: 10, color: Colors[scheme].muted }}>
+          <ThemedText style={{ marginTop: 10, color: Colors[scheme].muted, textAlign:'center' }}>
             From fresh flowers to regular cleaning, our services keep
             memories alive with dignity and love.
           </ThemedText>
@@ -58,37 +58,68 @@ export default function HomeScreen() {
             <ThemedText style={[styles.serviceText, {textAlign:'center'}]}>Professional cleaning with photo updates.</ThemedText>
           </Card>
         </View>
-
+ {/* Gentle, welcoming photo strip */}
+ <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 12, gap: 12, marginTop: 6 }}
+        >
+          <Image source={require('@/assets/images/flower_bouqet_memorial.jpeg')} style={styles.galleryImage} resizeMode="cover" />
+          <Image source={require('@/assets/images/candle_memorial.webp')} style={styles.galleryImage} resizeMode="cover" />
+          <Image source={require('@/assets/images/grave_cleaning.webp')} style={styles.galleryImage} resizeMode="cover" />
+          <Image source={require('@/assets/images/photo_service.webp')} style={styles.galleryImage} resizeMode="cover" />
+        </ScrollView>
         {/* How it works */}
         <ThemedView lightColor="transparent" darkColor="transparent" style={{ alignItems: 'center', marginTop: 24 }}>
           <ThemedText style={{ fontFamily: Fonts.display, fontSize: 28 }}>How It Works</ThemedText>
         </ThemedView>
-        <View style={{ flexDirection: 'row', gap: 12, paddingHorizontal: 12, marginTop: 8 }}>
-        <Card style={[styles.stepCard, { alignSelf: 'stretch', backgroundColor:"transparent", padding:10 }] }>
-            <ThemedText type="defaultSemiBold" style={styles.stepNumber}>1</ThemedText>
-            <View style={styles.stepContent}>
-              <ThemedText type="defaultSemiBold">Select a Service</ThemedText>
-              <ThemedText style={styles.serviceText}>Choose a service</ThemedText>
+
+        {/* Steps – vertical, welcoming copy */}
+        <View style={{ paddingHorizontal: 12, marginTop: 8 }}>
+          {/* Step 1 */}
+          <Card style={[styles.stepCard, { backgroundColor: 'transparent', padding: 12 }] }>
+            <View style={styles.stepIcon}>
+              <MaterialIcons name="local-florist" size={20} color={Colors[scheme].gold as any} />
             </View>
-            
+            <View style={styles.stepContent}>
+              <ThemedText type="defaultSemiBold">Choose a Service</ThemedText>
+              <ThemedText style={[styles.stepDescription, { color: Colors[scheme].muted }]}>
+                Select from <ThemedText type="defaultSemiBold">Flower Placement</ThemedText>, <ThemedText type="defaultSemiBold">Candle Lighting</ThemedText>, or <ThemedText type="defaultSemiBold">Grave Care</ThemedText> to honor your loved one.
+              </ThemedText>
+            </View>
           </Card>
-          <Card style={[styles.stepCard, { alignSelf: 'stretch', backgroundColor:"transparent", padding:10 }] }>
-            <ThemedText type="defaultSemiBold" style={styles.stepNumber}>2</ThemedText>
+
+          {/* Step 2 */}
+          <Card style={[styles.stepCard, { backgroundColor: 'transparent', padding: 12 }] }>
+            <View style={styles.stepIcon}>
+              <MaterialIcons name="push-pin" size={20} color={Colors[scheme].gold as any} />
+            </View>
+            <View style={styles.stepContent}>
+              <ThemedText type="defaultSemiBold">Share the Details</ThemedText>
+              <ThemedText style={[styles.stepDescription, { color: Colors[scheme].muted }]}>Enter the gravesite location and any special requests.</ThemedText>
+            </View>
+          </Card>
+
+          {/* Step 3 */}
+          <Card style={[styles.stepCard, { backgroundColor: 'transparent', padding: 12 }] }>
+            <View style={styles.stepIcon}>
+              <MaterialIcons name="volunteer-activism" size={20} color={Colors[scheme].gold as any} />
+            </View>
+            <View style={styles.stepContent}>
+              <ThemedText type="defaultSemiBold">We Care With Love</ThemedText>
+              <ThemedText style={[styles.stepDescription, { color: Colors[scheme].muted }]}>Our team visits, completes the service, and ensures dignity and respect every step of the way.</ThemedText>
+            </View>
+          </Card>
+
+          {/* Step 4 */}
+          <Card style={[styles.stepCard, { backgroundColor: 'transparent', padding: 12 }] }>
+            <View style={styles.stepIcon}>
+              <MaterialIcons name="photo-camera" size={20} color={Colors[scheme].gold as any} />
+            </View>
             <View style={styles.stepContent}>
               <ThemedText type="defaultSemiBold">Receive Updates</ThemedText>
-              <ThemedText style={styles.serviceText}>Photos & completion notices</ThemedText>
+              <ThemedText style={[styles.stepDescription, { color: Colors[scheme].muted }]}>Get photo confirmation directly in your app — feel connected, no matter the distance.</ThemedText>
             </View>
-           
-          </Card>
-        </View>
-        <View style={{ paddingHorizontal: 12 }}>
-          <Card style={[styles.stepCard, { alignItems: 'center',justifyContent:'center', backgroundColor:"transparent" , padding:10}] }>
-            <ThemedText type="defaultSemiBold" style={styles.stepNumber}>3</ThemedText>
-            <View style={styles.stepContent}>
-              <ThemedText type="defaultSemiBold">Personalize & Schedule</ThemedText>
-              <ThemedText style={styles.serviceText}>Add notes, photos and select a date</ThemedText>
-            </View>
-           
           </Card>
         </View>
 
@@ -128,21 +159,29 @@ const styles = StyleSheet.create({
   },
   stepCard: {
     flex: 1,
-    gap: 10,
-    alignItems:'flex-start',
-    flexDirection:"row",  
-  },
-  stepNumber: {
-    color: '#fff',
-    backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    alignSelf: 'flex-start',
-    marginBottom: 6,
+    gap: 12,
+    alignItems:'center',
+    flexDirection:"row",
   },
   stepContent: {
     flex: 1,
     minWidth: 0,
+  },
+  stepDescription: {
+    marginTop: 4,
+    opacity: 0.95,
+  },
+  stepIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  galleryImage: {
+    width: 220,
+    height: 140,
+    borderRadius: 14,
   },
 });
