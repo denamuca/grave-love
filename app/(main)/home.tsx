@@ -103,7 +103,7 @@ export default function HomeScreen() {
 
         {/* CTA */}
         <View style={{ paddingHorizontal: 20, marginTop: 16, marginBottom: 24 }}>
-          <Link href="/(main)/profile" asChild>
+          <Link href="/auth/sign-up" asChild>
             <Button variant="ghost" style={{ paddingVertical: 14 }}>
               Sign up
             </Button>

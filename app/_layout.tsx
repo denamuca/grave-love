@@ -19,6 +19,8 @@ export default function RootLayout() {
       <AppProvider>
         <Stack screenOptions={{ headerBackTitleVisible: false }}>
           <Stack.Screen name="(main)" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/sign-in" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/sign-up" options={{ headerShown: false }} />
           <Stack.Screen name="memorial/[id]" options={{
             // Keep minimal back button and no title
             headerTitle: '',
