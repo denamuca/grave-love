@@ -41,6 +41,15 @@ export default function RootLayout() {
             headerTitleStyle: { color: Colors[colorScheme ?? 'dark'].text },
             headerShadowVisible: false,
           }} />
+          <Stack.Screen name="cemetery/[id]" options={{
+            title: 'Cemetery',
+            headerBackTitleVisible: false,
+            headerBackTitle: '',
+            headerStyle: { backgroundColor: Colors[colorScheme ?? 'dark'].card },
+            headerTintColor: Colors[colorScheme ?? 'dark'].text,
+            headerTitleStyle: { color: Colors[colorScheme ?? 'dark'].text },
+            headerShadowVisible: false,
+          }} />
           <Stack.Screen name="order/new" options={{
             title: 'New Order',
             headerBackTitleVisible: false,

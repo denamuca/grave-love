@@ -19,6 +19,10 @@ const MAPPING = {
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
   'magnifyingglass': 'search',
+  'heart.fill': 'favorite',
+  'mappin.and.ellipse': 'place',
+  'clock.fill': 'schedule',
+  'phone.fill': 'phone',
 } as IconMapping;
 
 /**

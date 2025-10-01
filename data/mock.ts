@@ -46,6 +46,21 @@ export type Job = {
   notes?: string;
 };
 
+export type Cemetery = {
+  id: string;
+  name: string;
+  location: string;
+  founded: string;
+  acres: number;
+  notable?: string;
+  description?: string;
+  visiting_hours?: string;
+  phone?: string;
+  website?: string;
+  services?: string[];
+  image?: any;
+};
+
 export const memorials: Memorial[] = [
   {
     id: 'm1',
@@ -149,5 +164,53 @@ export const jobs: Job[] = [
     type: 'flowers',
     scheduled_date: '2025-10-31',
     status: 'scheduled',
+  },
+];
+
+export const cemeteries: Cemetery[] = [
+  {
+    id: 'c1',
+    name: 'Greenwood Cemetery',
+    location: 'Brooklyn, NY',
+    founded: '1838',
+    acres: 478,
+    notable: 'Final resting place of Leonard Bernstein and Jean-Michel Basquiat',
+    description:
+      'A National Historic Landmark known for its rolling hills, gothic revival monuments, and sweeping skyline views over Manhattan.',
+    visiting_hours: 'Daily 7:00 AM – 7:00 PM',
+    phone: '(718) 210-3080',
+    website: 'https://www.green-wood.com',
+    services: ['Guided historical tours', 'On-site chapel', 'Florist partners', 'Digital memorial kiosks'],
+    image: require('@/assets/images/cementries_one.jpg'),
+  },
+  {
+    id: 'c2',
+    name: 'Evergreen Memorial Park',
+    location: 'Seattle, WA',
+    founded: '1922',
+    acres: 210,
+    notable: 'Extensive rose gardens and reflection pond',
+    description:
+      'Peaceful, tree-lined grounds overlooking the Puget Sound with modern columbarium spaces and curated memorial gardens.',
+    visiting_hours: 'Daily 8:00 AM – Sunset',
+    phone: '(206) 555-0144',
+    website: 'https://www.evergreenmemorial.com',
+    services: ['Seasonal flower placement', 'Maintenance programs', 'Family gathering pavilion'],
+    image: require('@/assets/images/cementries_two.webp'),
+  },
+  {
+    id: 'c3',
+    name: 'St. Augustine Heritage Cemetery',
+    location: 'Savannah, GA',
+    founded: '1856',
+    acres: 145,
+    notable: 'Spanish moss oak canopies and historic mausoleums',
+    description:
+      'A Southern heritage site combining historic architecture with family memorial plots, featuring quiet walking paths and remembrance fountains.',
+    visiting_hours: 'Sun 8:30 AM – 6:00 PM',
+    phone: '(912) 555-0198',
+    website: 'https://www.staugustineheritage.org',
+    services: ['Heritage plot tours', 'Stone restoration', 'Event hosting for remembrance ceremonies'],
+    image: require('@/assets/images/cementries_three.jpeg'),
   },
 ];

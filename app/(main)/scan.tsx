@@ -8,13 +8,14 @@ import { Button } from '@/components/ui/Button';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useApp, type Memorial } from '@/lib/store/AppContext';
+import { useApp, type Cemetery, type Memorial } from '@/lib/store/AppContext';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
-  const { memorials } = useApp();
+  const [activeFilter, setActiveFilter] = useState<'memorials' | 'cemeteries'>('memorials');
+  const { memorials, cemeteries } = useApp();
   const scheme = useColorScheme() ?? 'light';
   const insets = useSafeAreaInsets();
 
@@ -35,6 +36,28 @@ export default function SearchScreen() {
       .sort((a, b) => a.name_full.localeCompare(b.name_full));
   }, [memorials, normalizedQuery]);
 
+  const filteredCemeteries = useMemo(() => {
+    const list = [...cemeteries];
+    if (!normalizedQuery) {
+      return list.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    return list
+      .filter((cemetery) => {
+        const haystack = [
+          cemetery.name,
+          cemetery.location,
+          cemetery.notable,
+          cemetery.description,
+          cemetery.visiting_hours,
+        ]
+          .filter((value): value is string => typeof value === 'string' && value.length > 0)
+          .map((value) => value.toLowerCase());
+        return haystack.some((value) => value.includes(normalizedQuery));
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [cemeteries, normalizedQuery]);
+
   const slugSuggestion = useMemo(() => {
     if (!normalizedQuery) return '';
     return normalizedQuery
@@ -42,10 +65,15 @@ export default function SearchScreen() {
       .replace(/(^-+|-+$)/g, '');
   }, [normalizedQuery]);
 
-  const showCreateOption = Boolean(slugSuggestion) && !memorials.some((m) => m.slug === slugSuggestion);
+  const showCreateOption =
+    activeFilter === 'memorials' && Boolean(slugSuggestion) && !memorials.some((m) => m.slug === slugSuggestion);
 
   function openMemorial(memorial: Memorial) {
     router.push({ pathname: '/memorial/[id]', params: { id: memorial.id } });
+  }
+
+  function openCemetery(cemetery: Cemetery) {
+    router.push({ pathname: '/cemetery/[id]', params: { id: cemetery.id } });
   }
 
   function handleCreateMemorial() {
@@ -82,9 +110,9 @@ export default function SearchScreen() {
             />
           </View>
           <View style={[styles.hero, { backgroundColor: Colors[scheme].card }]}> 
-            <ThemedText type="title">Find a Memorial</ThemedText>
+            <ThemedText type="title">Plan Your Visit</ThemedText>
             <ThemedText style={styles.heroCopy}>
-              Search by name, family code, or cemetery to visit and manage your loved ones.
+              Search loved ones or explore partner cemeteries to plan your next remembrance.
             </ThemedText>
           </View>
 
@@ -110,44 +138,147 @@ export default function SearchScreen() {
             />
           </View>
 
-          <ThemedText style={styles.sectionLabel}>
-            {normalizedQuery ? 'Search results' : 'All memorials'}
-          </ThemedText>
-
-          {filteredMemorials.length > 0 ? (
-            <View style={styles.resultsList}>
-              {filteredMemorials.map((memorial) => {
-                const years = formatYearRange(memorial.date_birth, memorial.date_death);
-                return (
-                  <TouchableOpacity
-                    key={memorial.id}
-                    onPress={() => openMemorial(memorial)}
+          <View style={[styles.toggleRow, { backgroundColor: Colors[scheme].card, borderColor: Colors[scheme].border }]}>
+            {[
+              { key: 'memorials', label: 'Loved Ones' },
+              { key: 'cemeteries', label: 'Cemeteries' },
+            ].map((option) => {
+              const isActive = activeFilter === option.key;
+              return (
+                <TouchableOpacity
+                  key={option.key}
+                  onPress={() => setActiveFilter(option.key as typeof activeFilter)}
+                  style={[styles.toggleOption, isActive && { backgroundColor: Colors[scheme].tint }]}
+                >
+                  <ThemedText
                     style={[
-                      styles.resultCard,
-                      {
-                        backgroundColor: Colors[scheme].card,
-                        borderColor: Colors[scheme].border,
-                      },
+                      styles.toggleLabel,
+                      { color: isActive ? Colors[scheme].background : Colors[scheme].muted },
                     ]}
                   >
-                    {memorial.cover_image ? (
-                      <Image source={memorial.cover_image} style={styles.avatar} resizeMode="cover" />
-                    ) : (
-                      <View style={[styles.avatar, styles.avatarFallback, { backgroundColor: Colors[scheme].border }]}>
-                        <IconSymbol name="person.crop.circle" size={24} color={Colors[scheme].text} />
+                    {option.label}
+                  </ThemedText>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <ThemedText style={styles.sectionLabel}>
+            {activeFilter === 'memorials'
+              ? normalizedQuery
+                ? 'Memorial matches'
+                : 'All memorials'
+              : normalizedQuery
+              ? 'Cemetery matches'
+              : 'Partner cemeteries'}
+          </ThemedText>
+
+          {activeFilter === 'memorials' ? (
+            filteredMemorials.length > 0 ? (
+              <View style={styles.resultsList}>
+                {filteredMemorials.map((memorial) => {
+                  const years = formatYearRange(memorial.date_birth, memorial.date_death);
+                  return (
+                    <TouchableOpacity
+                      key={memorial.id}
+                      onPress={() => openMemorial(memorial)}
+                      style={[
+                        styles.resultCard,
+                        {
+                          backgroundColor: Colors[scheme].card,
+                          borderColor: Colors[scheme].border,
+                        },
+                      ]}
+                    >
+                      {memorial.cover_image ? (
+                        <Image source={memorial.cover_image} style={styles.avatar} resizeMode="cover" />
+                      ) : (
+                        <View style={[styles.avatar, styles.avatarFallback, { backgroundColor: Colors[scheme].border }]}>
+                          <IconSymbol name="person.crop.circle" size={24} color={Colors[scheme].text} />
+                        </View>
+                      )}
+                      <View style={styles.resultContent}>
+                        <ThemedText type="defaultSemiBold">{memorial.name_full}</ThemedText>
+                        {years ? <ThemedText style={styles.metaText}>{years}</ThemedText> : null}
+                        {memorial.cemetery ? (
+                          <ThemedText style={styles.metaText}>{memorial.cemetery}</ThemedText>
+                        ) : null}
                       </View>
-                    )}
-                    <View style={styles.resultContent}>
-                      <ThemedText type="defaultSemiBold">{memorial.name_full}</ThemedText>
-                      {years ? <ThemedText style={styles.metaText}>{years}</ThemedText> : null}
-                      {memorial.cemetery ? (
-                        <ThemedText style={styles.metaText}>{memorial.cemetery}</ThemedText>
-                      ) : null}
+                      <IconSymbol name="chevron.right" size={18} color={Colors[scheme].muted} />
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            ) : (
+              <View
+                style={[
+                  styles.emptyState,
+                  {
+                    backgroundColor: Colors[scheme].card,
+                    borderColor: Colors[scheme].border,
+                  },
+                ]}
+              >
+                <ThemedText type="defaultSemiBold">No memorials found</ThemedText>
+                <ThemedText style={styles.metaText}>
+                  Double-check the spelling or create a new memorial below.
+                </ThemedText>
+              </View>
+            )
+          ) : filteredCemeteries.length > 0 ? (
+            <View style={styles.resultsList}>
+              {filteredCemeteries.map((cemetery) => (
+                <TouchableOpacity
+                  key={cemetery.id}
+                  onPress={() => openCemetery(cemetery)}
+                  style={[
+                    styles.cemeteryCard,
+                    {
+                      backgroundColor: Colors[scheme].card,
+                      borderColor: Colors[scheme].border,
+                    },
+                  ]}
+                >
+                  {cemetery.image ? (
+                    <Image source={cemetery.image} style={styles.cemeteryImage} resizeMode="cover" />
+                  ) : null}
+                  <View style={styles.cemeteryContent}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <ThemedText type="defaultSemiBold" style={{ flex: 1 }}>
+                        {cemetery.name}
+                      </ThemedText>
+                      <IconSymbol name="chevron.right" size={18} color={Colors[scheme].muted} />
                     </View>
-                    <IconSymbol name="chevron.right" size={18} color={Colors[scheme].muted} />
-                  </TouchableOpacity>
-                );
-              })}
+                    <View style={styles.metaRow}>
+                      <IconSymbol name="mappin.and.ellipse" size={16} color={Colors[scheme].muted} />
+                      <ThemedText style={styles.metaText}>{cemetery.location}</ThemedText>
+                    </View>
+                    {cemetery.visiting_hours ? (
+                      <View style={styles.metaRow}>
+                        <IconSymbol name="clock.fill" size={16} color={Colors[scheme].muted} />
+                        <ThemedText style={styles.metaText}>{cemetery.visiting_hours}</ThemedText>
+                      </View>
+                    ) : null}
+                    {cemetery.services && cemetery.services.length > 0 ? (
+                      <View style={styles.tagRow}>
+                        {cemetery.services.slice(0, 3).map((service) => (
+                          <View
+                            key={service}
+                            style={[styles.tag, { borderColor: Colors[scheme].border, backgroundColor: Colors[scheme].background }]}
+                          >
+                            <ThemedText style={[styles.metaText, { opacity: 0.8 }]}>{service}</ThemedText>
+                          </View>
+                        ))}
+                      </View>
+                    ) : null}
+                    {cemetery.description ? (
+                      <ThemedText style={[styles.metaText, { marginTop: 6 }]} numberOfLines={2}>
+                        {cemetery.description}
+                      </ThemedText>
+                    ) : null}
+                  </View>
+                </TouchableOpacity>
+              ))}
             </View>
           ) : (
             <View
@@ -159,9 +290,9 @@ export default function SearchScreen() {
                 },
               ]}
             >
-              <ThemedText type="defaultSemiBold">No memorials found</ThemedText>
+              <ThemedText type="defaultSemiBold">No cemeteries found</ThemedText>
               <ThemedText style={styles.metaText}>
-                Double-check the spelling or create a new memorial below.
+                Try another city or explore our featured grounds below.
               </ThemedText>
             </View>
           )}
@@ -195,6 +326,19 @@ const styles = StyleSheet.create({
   },
   leadingIcon: { marginRight: 8 },
   input: { flex: 1, paddingVertical: 10 },
+  toggleRow: {
+    flexDirection: 'row',
+    borderRadius: 12,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 4,
+  },
+  toggleOption: {
+    flex: 1,
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  toggleLabel: { fontWeight: '600', letterSpacing: 0.2 },
   sectionLabel: { fontSize: 14, letterSpacing: 0.4, opacity: 0.7, textTransform: 'uppercase' },
   resultsList: { gap: 12 },
   resultCard: {
@@ -209,10 +353,25 @@ const styles = StyleSheet.create({
   avatarFallback: { justifyContent: 'center', alignItems: 'center' },
   resultContent: { flex: 1 },
   metaText: { opacity: 0.7, marginTop: 2 },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
   emptyState: {
     borderRadius: 16,
     borderWidth: StyleSheet.hairlineWidth,
     padding: 16,
     gap: 4,
+  },
+  cemeteryCard: {
+    borderRadius: 18,
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+  },
+  cemeteryImage: { width: '100%', height: 140 },
+  cemeteryContent: { padding: 14, gap: 2 },
+  tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 6 },
+  tag: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
   },
 });

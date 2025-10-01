@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useMemo, useReducer } from 'react';
 import type { PropsWithChildren } from 'react';
-import { memorials as seedMemorials, posts as seedPosts, serviceTypes as seedServiceTypes } from '@/data/mock';
+import { cemeteries as seedCemeteries, memorials as seedMemorials, posts as seedPosts, serviceTypes as seedServiceTypes } from '@/data/mock';
 
 export type Memorial = typeof seedMemorials[number];
 export type Post = typeof seedPosts[number];
 export type ServiceType = typeof seedServiceTypes[number];
+export type Cemetery = typeof seedCemeteries[number];
 
 export type Order = {
   id: string;
@@ -28,6 +29,7 @@ type State = {
   memorials: Memorial[];
   posts: Post[];
   serviceTypes: ServiceType[];
+  cemeteries: Cemetery[];
   orders: Order[];
   subscriptions: Subscription[];
   reminders: Record<string, { birthday: boolean; passing: boolean; religious: boolean }>; // per memorial
@@ -85,6 +87,7 @@ const initial: State = {
   memorials: seedMemorials,
   posts: seedPosts,
   serviceTypes: seedServiceTypes,
+  cemeteries: seedCemeteries,
   orders: [],
   subscriptions: [],
   reminders: {},
