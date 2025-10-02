@@ -34,6 +34,7 @@ type State = {
   subscriptions: Subscription[];
   reminders: Record<string, { birthday: boolean; passing: boolean; religious: boolean }>; // per memorial
   candlesByName: Record<string, string>; // memorial_id -> ISO until
+  isAuthenticated: boolean;
 };
 
 type Action =
@@ -43,7 +44,8 @@ type Action =
   | { type: 'UPDATE_ORDER_STATUS'; payload: { id: string; status: Order['status'] } }
   | { type: 'ADD_SUBSCRIPTION'; payload: Subscription }
   | { type: 'SET_REMINDERS'; payload: { memorial_id: string; values: Partial<State['reminders'][string]> } }
-  | { type: 'SET_NAME_CANDLE'; payload: { memorial_id: string; until: string } };
+  | { type: 'SET_NAME_CANDLE'; payload: { memorial_id: string; until: string } }
+  | { type: 'SET_AUTHENTICATED'; payload: boolean };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -78,6 +80,11 @@ function reducer(state: State, action: Action): State {
         ...state,
         candlesByName: { ...state.candlesByName, [action.payload.memorial_id]: action.payload.until },
       };
+    case 'SET_AUTHENTICATED':
+      return {
+        ...state,
+        isAuthenticated: action.payload,
+      };
     default:
       return state;
   }
@@ -92,6 +99,7 @@ const initial: State = {
   subscriptions: [],
   reminders: {},
   candlesByName: {},
+  isAuthenticated: false,
 };
 
 type Ctx = State & {
@@ -102,6 +110,7 @@ type Ctx = State & {
   addSubscription: (s: Omit<Subscription, 'id' | 'status'>) => Subscription;
   setReminders: (memorial_id: string, values: Partial<State['reminders'][string]>) => void;
   startNameCandle: (memorial_id: string, hours?: number) => string; // returns until ISO
+  setAuthenticated: (value: boolean) => void;
 };
 
 const AppContext = createContext<Ctx | null>(null);
@@ -117,6 +126,7 @@ export function AppProvider({ children }: PropsWithChildren<{}>) {
     return {
       ...state,
       candlesByName: state.candlesByName,
+      isAuthenticated: state.isAuthenticated,
       addMemorial: (m) => {
         const newM: Memorial = { ...m, id: uid('m') } as Memorial;
         dispatch({ type: 'ADD_MEMORIAL', payload: newM });
@@ -150,6 +160,7 @@ export function AppProvider({ children }: PropsWithChildren<{}>) {
         dispatch({ type: 'SET_NAME_CANDLE', payload: { memorial_id, until } });
         return until;
       },
+      setAuthenticated: (value) => dispatch({ type: 'SET_AUTHENTICATED', payload: value }),
     };
   }, [state]);
 

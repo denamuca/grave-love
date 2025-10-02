@@ -6,20 +6,33 @@ import { Card } from '@/components/ui/Card';
 import LottieOverlay from '@/components/ui/LottieOverlay';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useApp } from '@/lib/store/AppContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Link, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, Image as RNImage, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, Image as RNImage, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+// eslint-disable-next-line import/no-unresolved
+import * as ImagePicker from 'expo-image-picker';
 
 export default function MemorialDetail() {
+  const isAuthenticated = useRequireAuth();
+
   const { id } = useLocalSearchParams<{ id: string }>();
   const navigation = useNavigation();
   const { memorials, posts, serviceTypes, orders, addPost, candlesByName, startNameCandle } = useApp();
   const memorial = memorials.find((m) => m.id === id) ?? memorials[0];
   const timeline = useMemo(() => posts.filter((p) => p.memorial_id === memorial.id), [posts, memorial.id]);
+  const cleaningService = useMemo(
+    () => serviceTypes.find((s) => s.key.includes('cleaning')),
+    [serviceTypes],
+  );
   const scheme = useColorScheme() ?? 'light';
   const [tab, setTab] = useState<'wall' | 'timeline' | 'visits'>('wall');
+  const [showComposer, setShowComposer] = useState(false);
+  const [composerType, setComposerType] = useState<'message' | 'photo'>('message');
+  const [composerText, setComposerText] = useState('');
+  const [composerMedia, setComposerMedia] = useState<ImagePicker.ImagePickerAsset | null>(null);
 
   // Ensure the header shows only a back button (no title/label)
   useEffect(() => {
@@ -104,6 +117,19 @@ export default function MemorialDetail() {
     return items;
   }, [posts, orders, serviceTypes, memorial.id, memorial.name_full]);
 
+  if (!isAuthenticated) {
+    return (
+      <ScreenBackground>
+        <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
+          <ThemedText type="title" style={{ textAlign: 'center' }}>Sign in to view memorials</ThemedText>
+          <ThemedText style={{ marginTop: 8, color: Colors[scheme].muted, textAlign: 'center' }}>
+            Memorial pages hold private family stories, photos, and service updates.
+          </ThemedText>
+        </ThemedView>
+      </ScreenBackground>
+    );
+  }
+
   return (
     <ScreenBackground>
     <ScrollView contentContainerStyle={styles.container}>
@@ -173,6 +199,127 @@ export default function MemorialDetail() {
       {tab === 'wall' && (
         <ThemedView lightColor="transparent" darkColor="transparent" style={styles.section}>
           <ThemedText type="title">Memorial Wall</ThemedText>
+          <Card>
+            {showComposer ? (
+              <View style={{ gap: 12 }}>
+                <View style={{ flexDirection: 'row', gap: 8 }}>
+                  {(
+                    [
+                      { key: 'message', label: 'Message' },
+                      { key: 'photo', label: 'Photo' },
+                    ] as const
+                  ).map((option) => {
+                    const isActive = composerType === option.key;
+                    return (
+                      <Pressable
+                        key={option.key}
+                        onPress={() => setComposerType(option.key)}
+                        style={{
+                          flex: 1,
+                          paddingVertical: 8,
+                          borderRadius: 10,
+                          borderWidth: StyleSheet.hairlineWidth,
+                          borderColor: isActive ? Colors[scheme].tint : Colors[scheme].border,
+                          backgroundColor: isActive ? `${Colors[scheme].tint}22` : Colors[scheme].card,
+                          alignItems: 'center',
+                        }}
+                      >
+                        <ThemedText style={{ color: isActive ? Colors[scheme].tint : Colors[scheme].text }}>
+                          {option.label}
+                        </ThemedText>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+                <TextInput
+                  value={composerText}
+                  onChangeText={setComposerText}
+                  placeholder={
+                    composerType === 'photo'
+                      ? 'Add a caption or memory'
+                      : 'Share a message for family and friends'
+                  }
+                  placeholderTextColor={Colors[scheme].muted}
+                  style={[
+                    styles.composerInput,
+                    {
+                      backgroundColor: Colors[scheme].card,
+                      borderColor: Colors[scheme].border,
+                      color: Colors[scheme].text,
+                    },
+                  ]}
+                  multiline
+                />
+                {composerType === 'photo' ? (
+                  <View style={{ gap: 8 }}>
+                    <Button
+                      variant="ghost"
+                      onPress={async () => {
+                        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                        if (status !== 'granted') {
+                          alert('Please allow photo library access to add images.');
+                          return;
+                        }
+                        const result = await ImagePicker.launchImageLibraryAsync({
+                          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                          quality: 0.8,
+                        });
+                        if (!result.canceled) {
+                          setComposerMedia(result.assets[0]);
+                        }
+                      }}
+                    >
+                      {composerMedia ? 'Change photo' : 'Choose photo from device'}
+                    </Button>
+                    {composerMedia ? (
+                      <RNImage
+                        source={{ uri: composerMedia.uri }}
+                        style={{ height: 160, borderRadius: 12 }}
+                      />
+                    ) : null}
+                  </View>
+                ) : null}
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8 }}>
+                  <Button
+                    variant="ghost"
+                    onPress={() => {
+                      setShowComposer(false);
+                      setComposerText('');
+                      setComposerMedia(null);
+                      setComposerType('message');
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onPress={() => {
+                      const trimmed = composerText.trim();
+                      if (!trimmed && !(composerType === 'photo' && composerMedia)) {
+                        alert('Please add a message or image');
+                        return;
+                      }
+                      addPost({
+                        memorial_id: memorial.id,
+                        type: composerType,
+                        text: trimmed || undefined,
+                        media_url: composerType === 'photo' && composerMedia ? composerMedia.uri : undefined,
+                        author: 'You',
+                      });
+                      setShowComposer(false);
+                      setComposerText('');
+                      setComposerMedia(null);
+                      setComposerType('message');
+                      alert('Tribute posted to the wall.');
+                    }}
+                  >
+                    Share tribute
+                  </Button>
+                </View>
+              </View>
+            ) : (
+              <Button onPress={() => setShowComposer(true)}>+ Post to memorial wall</Button>
+            )}
+          </Card>
           <Card>
             <View style={styles.rowBetween}>
               <Link href={{ pathname: '/order/new', params: { memorialId: memorial.id, serviceId: serviceTypes[0]?.id } }} asChild>
@@ -348,6 +495,25 @@ export default function MemorialDetail() {
 
       <ThemedView style={[styles.section, {backgroundColor:'transparent'}]}>
         <ThemedText type="title">Services</ThemedText>
+        {cleaningService ? (
+          <Card style={{ padding: 12, gap: 12 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <MaterialIcons name="cleaning-services" size={24} color={Colors[scheme].tint as any} />
+              <View style={{ flex: 1 }}>
+                <ThemedText type="defaultSemiBold">Need a grave cleaning?</ThemedText>
+                <ThemedText style={{ color: Colors[scheme].muted }}>
+                  Schedule a professional cleaning with photo updates when it is complete.
+                </ThemedText>
+              </View>
+            </View>
+            <Link
+              href={{ pathname: '/order/new', params: { memorialId: memorial.id, serviceId: cleaningService.id } }}
+              asChild
+            >
+              <Button>Order grave cleaning</Button>
+            </Link>
+          </Card>
+        ) : null}
         <Card style={{ padding: 12 }}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingRight: 4 }}>
             {serviceTypes.map((s) => (
@@ -441,5 +607,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: StyleSheet.hairlineWidth,
     marginBottom:30
+  },
+  composerInput: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 10,
+    padding: 10,
+    minHeight: 60,
+    textAlignVertical: 'top',
   },
 });

@@ -9,9 +9,12 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useApp } from '@/lib/store/AppContext';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 import { Link, useLocalSearchParams, useNavigation } from 'expo-router';
 
 export default function CemeteryDetailScreen() {
+  const isAuthenticated = useRequireAuth();
+
   const { id } = useLocalSearchParams<{ id: string }>();
   const navigation = useNavigation();
   const scheme = useColorScheme() ?? 'light';
@@ -33,6 +36,19 @@ export default function CemeteryDetailScreen() {
   function openWebsite() {
     if (!cemetery.website) return;
     Linking.openURL(cemetery.website).catch(() => undefined);
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <ScreenBackground>
+        <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
+          <ThemedText type="title" style={{ textAlign: 'center' }}>Sign in to explore cemeteries</ThemedText>
+          <ThemedText style={{ marginTop: 8, color: Colors[scheme].muted, textAlign: 'center' }}>
+            Partner cemetery profiles unlock after you log in.
+          </ThemedText>
+        </ThemedView>
+      </ScreenBackground>
+    );
   }
 
   return (

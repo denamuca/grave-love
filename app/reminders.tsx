@@ -3,9 +3,22 @@ import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { Card } from '@/components/ui/Card';
 import { StyleSheet, Switch, View } from 'react-native';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 
 export default function RemindersScreen() {
+  const isAuthenticated = useRequireAuth();
   const { memorials, reminders, setReminders } = useApp();
+
+  if (!isAuthenticated) {
+    return (
+      <ThemedView style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}> 
+        <ThemedText type="title">Sign in to manage reminders</ThemedText>
+        <ThemedText style={{ marginTop: 8, opacity: 0.7, textAlign: 'center' }}>
+          Email and push alerts become available once you log in.
+        </ThemedText>
+      </ThemedView>
+    );
+  }
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title">Reminders</ThemedText>
@@ -28,4 +41,3 @@ const styles = StyleSheet.create({
   container: { padding: 16, gap: 12 },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8 },
 });
-

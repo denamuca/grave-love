@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Colors, Fonts } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useApp } from '@/lib/store/AppContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Link } from 'expo-router';
 import { useRef, useState } from 'react';
@@ -17,6 +18,7 @@ export default function HomeScreen() {
   const { width } = useWindowDimensions();
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const testimonialScrollRef = useRef<ScrollView>(null);
+  const { isAuthenticated } = useApp();
 
   const testimonials = [
     {
@@ -65,23 +67,51 @@ export default function HomeScreen() {
           </ThemedText>
         </ThemedView>
 
+        {!isAuthenticated ? (
+          <Card style={styles.onboardingCard}>
+            <ThemedText type="title" style={{ textAlign: 'center' }}>Stay close, even from afar</ThemedText>
+            <ThemedText style={{ color: Colors[scheme].muted, textAlign: 'center' }}>
+              Create a memorial page to share photos, light candles, and order care. Sign up or log in to begin.
+            </ThemedText>
+            <View style={styles.ctaButtons}>
+              <Link href="/auth/sign-up" asChild>
+                <Button style={{ flex: 1 }}>Sign up</Button>
+              </Link>
+              <Link href="/auth/sign-in" asChild>
+                <Button variant="ghost" style={{ flex: 1 }}>Log in</Button>
+              </Link>
+            </View>
+          </Card>
+        ) : null}
+
         {/* Services */}
-        <View style={{ flexDirection: 'row', gap: 12, paddingHorizontal: 12, marginTop: 18 }}>
-          <Card style={[styles.serviceCard, {backgroundColor:'transparent'}]}>
-            <MaterialIcons name="local-florist" size={28} color={Colors[scheme].gold as any} style={{ marginBottom: 8 }} />
-            <ThemedText type="defaultSemiBold" style={{textAlign:'center'}}>Flower Placement</ThemedText>
-            <ThemedText style={[styles.serviceText, {textAlign:'center'}]}>Deliver and place flowers at gravesite.</ThemedText>
-          </Card>
-          <Card style={[styles.serviceCard, {backgroundColor:'transparent'}]}>
-            <MaterialIcons name="local-fire-department" size={28} color={Colors[scheme].gold as any} style={{ marginBottom: 8 }} />
-            <ThemedText type="defaultSemiBold" style={{textAlign:'center'}}>Candle Lighting</ThemedText>
-            <ThemedText style={[styles.serviceText, {textAlign:'center'}]}>Honor loved ones with a warm glow.</ThemedText>
-          </Card>
-          <Card style={[styles.serviceCard, {backgroundColor:'transparent'}]}>
-            <MaterialIcons name="cleaning-services" size={28} color={Colors[scheme].gold as any} style={{ marginBottom: 8 }} />
-            <ThemedText type="defaultSemiBold" style={{textAlign:'center'}}>Grave Care</ThemedText>
-            <ThemedText style={[styles.serviceText, {textAlign:'center'}]}>Professional cleaning with photo updates.</ThemedText>
-          </Card>
+        <View style={{ marginTop: 18 }}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 12, gap: 12 }}
+          >
+            <Card style={[styles.serviceCard, { backgroundColor: 'transparent'} ]}>
+              <MaterialIcons name="favorite" size={28} color={Colors[scheme].gold as any} style={{ marginBottom: 8 }} />
+              <ThemedText type="defaultSemiBold" style={{ textAlign: 'center' }}>Remember</ThemedText>
+              <ThemedText style={[styles.serviceText, { textAlign: 'center' }]}>Create a dedicated digital memorial space for memories, condolences, and reflections.</ThemedText>
+            </Card>
+            <Card style={[styles.serviceCard, { backgroundColor: 'transparent' }]}>
+              <MaterialIcons name="local-florist" size={28} color={Colors[scheme].gold as any} style={{ marginBottom: 8 }} />
+              <ThemedText type="defaultSemiBold" style={{ textAlign: 'center' }}>Flower Placement</ThemedText>
+              <ThemedText style={[styles.serviceText, { textAlign: 'center' }]}>Deliver and place flowers at gravesite.</ThemedText>
+            </Card>
+            <Card style={[styles.serviceCard, { backgroundColor: 'transparent' }]}>
+              <MaterialIcons name="local-fire-department" size={28} color={Colors[scheme].gold as any} style={{ marginBottom: 8 }} />
+              <ThemedText type="defaultSemiBold" style={{ textAlign: 'center' }}>Candle Lighting</ThemedText>
+              <ThemedText style={[styles.serviceText, { textAlign: 'center' }]}>Honor loved ones with a warm glow.</ThemedText>
+            </Card>
+            <Card style={[styles.serviceCard, { backgroundColor: 'transparent' }]}>
+              <MaterialIcons name="cleaning-services" size={28} color={Colors[scheme].gold as any} style={{ marginBottom: 8 }} />
+              <ThemedText type="defaultSemiBold" style={{ textAlign: 'center' }}>Grave Care</ThemedText>
+              <ThemedText style={[styles.serviceText, { textAlign: 'center' }]}>Professional cleaning with photo updates.</ThemedText>
+            </Card>
+          </ScrollView>
         </View>
 
         {/* Testimonials slider */}
@@ -194,14 +224,6 @@ export default function HomeScreen() {
           <Image source={require('@/assets/images/photo_service.webp')} style={styles.galleryImage} resizeMode="cover" />
         </ScrollView>
 
-        {/* CTA */}
-        <View style={{ paddingHorizontal: 20, marginTop: 16, marginBottom: 24 }}>
-          <Link href="/auth/sign-up" asChild>
-            <Button variant="ghost" style={{ paddingVertical: 14 }}>
-              Sign up
-            </Button>
-          </Link>
-        </View>
       </ScrollView>
     </ScreenBackground>
   );
@@ -210,14 +232,32 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   scroll: { paddingTop: 24, paddingBottom: 16 },
   serviceCard: {
-    flex: 1,
+    width: 210,
+    padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
   },
+  rememberCard: {
+    backgroundColor: 'transparent',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    gap: 8,
+  },
   serviceText: {
-    marginTop:5,
+    marginTop: 5,
     opacity: 0.85,
+  },
+  onboardingCard: {
+    marginHorizontal: 20,
+    marginTop: 20,
+    gap: 12,
+    alignItems: 'center',
+  },
+  ctaButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
   },
   stepCard: {
     flex: 1,

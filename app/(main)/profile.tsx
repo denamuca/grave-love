@@ -2,17 +2,38 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { useState } from 'react';
 import { Image, StyleSheet, Switch, View } from 'react-native';
 import ScreenBackground from '@/components/screen-background';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useApp } from '@/lib/store/AppContext';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 
 export default function ProfileScreen() {
+  const isAuthenticated = useRequireAuth();
   const [birthday, setBirthday] = useState(true);
   const [passing, setPassing] = useState(true);
   const [religious, setReligious] = useState(false);
   const insets = useSafeAreaInsets();
+  const { setAuthenticated } = useApp();
+
+  if (!isAuthenticated) {
+    return (
+      <ScreenBackground>
+        <ThemedView
+          lightColor="transparent"
+          darkColor="transparent"
+          style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}
+        >
+          <ThemedText type="title">Sign in required</ThemedText>
+          <ThemedText style={{ marginTop: 8, opacity: 0.7, textAlign: 'center' }}>
+            Profile settings, reminders, and sign out controls are available after you log in.
+          </ThemedText>
+        </ThemedView>
+      </ScreenBackground>
+    );
+  }
 
   return (
     <ScreenBackground>
@@ -41,6 +62,16 @@ export default function ProfileScreen() {
       <ThemedText style={{ opacity: 0.7 }}>
         Changes are local-only in this prototype. No data is stored.
       </ThemedText>
+      <Button
+        variant="ghost"
+        style={{ marginTop: 12 }}
+        onPress={() => {
+          setAuthenticated(false);
+          router.replace('/(main)/home');
+        }}
+      >
+        Sign out
+      </Button>
     </ThemedView>
     </ScreenBackground>
   );

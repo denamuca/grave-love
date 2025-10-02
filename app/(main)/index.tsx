@@ -7,16 +7,30 @@ import LottieOverlay from '@/components/ui/LottieOverlay';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useApp } from '@/lib/store/AppContext';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 import { Link, router } from 'expo-router';
 import { useMemo } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
 export default function FamilyHomeScreen() {
+  const isAuthenticated = useRequireAuth();
+
   const scheme = useColorScheme() ?? 'light';
   const { memorials, posts } = useApp();
   const recentPosts = useMemo(() => {
     return [...posts].sort((a, b) => (a.created_at < b.created_at ? 1 : -1)).slice(0, 3);
   }, [posts]);
+
+  if (!isAuthenticated) {
+    return (
+      <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
+        <ThemedText type="title" style={{ textAlign: 'center' }}>Family space locked</ThemedText>
+        <ThemedText style={{ marginTop: 8, color: Colors[scheme].muted, textAlign: 'center' }}>
+          Sign in to see your memorial wall, timelines, and recent family activity.
+        </ThemedText>
+      </ThemedView>
+    );
+  }
 
   return (
     <ParallaxScrollView

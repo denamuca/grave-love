@@ -9,6 +9,7 @@ import { Link, router } from 'expo-router';
 import { useState } from 'react';
 import { Image, StyleSheet, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useApp } from '@/lib/store/AppContext';
 
 export default function SignUpScreen() {
   const scheme = useColorScheme() ?? 'dark';
@@ -16,6 +17,7 @@ export default function SignUpScreen() {
   const [name, setName] = useState('Brian Rusi');
   const [email, setEmail] = useState('brianrusi@gmail.com');
   const [password, setPassword] = useState('GraveLove!');
+  const { setAuthenticated } = useApp();
 
   return (
     <ScreenBackground>
@@ -56,7 +58,14 @@ export default function SignUpScreen() {
               secureTextEntry
               style={[styles.input, { backgroundColor: Colors[scheme].card, borderColor: Colors[scheme].border, color: Colors[scheme].text }]}
             />
-            <Button onPress={() => { router.replace('/(main)/home'); }}>Sign Up</Button>
+            <Button
+              onPress={() => {
+                setAuthenticated(true);
+                router.replace('/(main)/home');
+              }}
+            >
+              Sign Up
+            </Button>
           </View>
         </Card>
 

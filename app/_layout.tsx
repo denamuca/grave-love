@@ -12,7 +12,8 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
-  const colorScheme = ForceDark ? 'dark' : useColorScheme();
+  const systemScheme = useColorScheme();
+  const colorScheme = ForceDark ? 'dark' : systemScheme;
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -36,6 +37,7 @@ export default function RootLayout() {
             title: 'Create Memorial',
             headerBackTitleVisible: false,
             headerBackTitle: '',
+            headerBackButtonDisplayMode: 'minimal',
             headerStyle: { backgroundColor: Colors[colorScheme ?? 'dark'].card },
             headerTintColor: Colors[colorScheme ?? 'dark'].text,
             headerTitleStyle: { color: Colors[colorScheme ?? 'dark'].text },

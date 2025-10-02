@@ -50,6 +50,7 @@ export function MemorialCard({ memorial, onPress }: Props) {
   const { posts, serviceTypes, addPost } = useApp();
   const c = Colors[scheme];
   const flowersService = serviceTypes.find((s) => s.key === 'flowers_standard');
+  const cleaningService = serviceTypes.find((s) => s.key.includes('cleaning'));
 
   const latest = posts
     .filter((p) => p.memorial_id === memorial.id)
@@ -117,6 +118,20 @@ export function MemorialCard({ memorial, onPress }: Props) {
               ) : null}
             </View>
           ) : null}
+          <View style={{ marginTop: 12, gap: 8 }}>
+            <Link href={{ pathname: '/memorial/[id]', params: { id: memorial.id } }} asChild>
+              <Button variant="ghost" style={{ paddingVertical: 6, paddingHorizontal: 10 }}>
+                Post a photo or message
+              </Button>
+            </Link>
+            {cleaningService ? (
+              <Link href={{ pathname: '/order/new', params: { memorialId: memorial.id, serviceId: cleaningService.id } }} asChild>
+                <Button variant="ghost" style={{ paddingVertical: 6, paddingHorizontal: 10 }}>
+                  Order grave cleaning
+                </Button>
+              </Link>
+            ) : null}
+          </View>
         </View>
 
         <MaterialIcons name="chevron-right" size={20} color={c.muted as any} />

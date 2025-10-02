@@ -9,10 +9,13 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useApp, type Cemetery, type Memorial } from '@/lib/store/AppContext';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function SearchScreen() {
+  const isAuthenticated = useRequireAuth();
+
   const [query, setQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'memorials' | 'cemeteries'>('memorials');
   const { memorials, cemeteries } = useApp();
@@ -90,6 +93,23 @@ export default function SearchScreen() {
     return born || passed;
   }
 
+  if (!isAuthenticated) {
+    return (
+      <ScreenBackground>
+        <ThemedView
+          lightColor="transparent"
+          darkColor="transparent"
+          style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}
+        >
+          <ThemedText type="title">Please sign in</ThemedText>
+          <ThemedText style={{ marginTop: 8, color: Colors[scheme].muted, textAlign: 'center', paddingHorizontal: 24 }}>
+            Search, memorial listings, and cemetery details unlock after you create an account or log in.
+          </ThemedText>
+        </ThemedView>
+      </ScreenBackground>
+    );
+  }
+
   return (
     <ScreenBackground>
       <ThemedView
@@ -137,6 +157,10 @@ export default function SearchScreen() {
               returnKeyType="search"
             />
           </View>
+
+          <Button onPress={() => router.push('/memorial/create')}>
+            Create a memorial
+          </Button>
 
           <View style={[styles.toggleRow, { backgroundColor: Colors[scheme].card, borderColor: Colors[scheme].border }]}>
             {[

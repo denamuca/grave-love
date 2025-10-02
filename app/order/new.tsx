@@ -6,12 +6,15 @@ import { Card } from '@/components/ui/Card';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useApp } from '@/lib/store/AppContext';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Image as RNImage, StyleSheet, TextInput, View } from 'react-native';
 
 export default function NewOrderScreen() {
+  const isAuthenticated = useRequireAuth();
+
   const { memorialId, serviceId } = useLocalSearchParams<{ memorialId?: string; serviceId?: string }>();
   const { memorials, serviceTypes, createOrder } = useApp();
   const memorial = useMemo(() => memorials.find((m) => m.id === memorialId) ?? memorials[0], [memorialId, memorials]);
@@ -21,6 +24,19 @@ export default function NewOrderScreen() {
   const todayIso = new Date().toISOString().slice(0, 10);
   const [date, setDate] = useState(todayIso);
   const [notes, setNotes] = useState('Please tidy the area and place flowers neatly.');
+
+  if (!isAuthenticated) {
+    return (
+      <ScreenBackground>
+        <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
+          <ThemedText type="title" style={{ textAlign: 'center' }}>Sign in to place an order</ThemedText>
+          <ThemedText style={{ marginTop: 8, color: Colors[scheme].muted, textAlign: 'center' }}>
+            Schedule grave care services after creating an account.
+          </ThemedText>
+        </ThemedView>
+      </ScreenBackground>
+    );
+  }
 
   function setDateOffset(days: number) {
     const d = new Date();

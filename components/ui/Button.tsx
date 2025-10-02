@@ -28,7 +28,7 @@ export function Button({ children, onPress, style, variant = 'primary', disabled
         { backgroundColor: bg, borderColor: border, opacity: disabled ? 0.6 : pressed ? 0.85 : 1 },
         style,
       ]}>
-      <ThemedText style={[styles.text, { color: '#fff' } as TextStyle]}>{children}</ThemedText>
+      <ThemedText style={[styles.text, { color: textColor } as TextStyle]}>{children}</ThemedText>
     </Pressable>
   );
 }

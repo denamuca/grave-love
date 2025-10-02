@@ -5,12 +5,26 @@ import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { Button } from '@/components/ui/Button';
 import { useApp } from '@/lib/store/AppContext';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 
 export default function NewSubscription() {
+  const isAuthenticated = useRequireAuth();
+
   const { memorialId } = useLocalSearchParams<{ memorialId?: string }>();
   const { memorials, addSubscription } = useApp();
   const memorial = useMemo(() => memorials.find((m) => m.id === memorialId) ?? memorials[0], [memorialId, memorials]);
   const [plan, setPlan] = useState<'flowers_monthly' | 'cleaning_seasonal'>('flowers_monthly');
+
+  if (!isAuthenticated) {
+    return (
+      <ThemedView style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}> 
+        <ThemedText type="title">Please log in</ThemedText>
+        <ThemedText style={{ marginTop: 8, opacity: 0.7, textAlign: 'center' }}>
+          Subscription plans unlock after you sign in.
+        </ThemedText>
+      </ThemedView>
+    );
+  }
 
   return (
     <ThemedView style={styles.container}>
@@ -38,4 +52,3 @@ const styles = StyleSheet.create({
   container: { padding: 16, gap: 12 },
   group: { flexDirection: 'row', gap: 12 },
 });
-

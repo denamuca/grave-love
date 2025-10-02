@@ -4,12 +4,31 @@ import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { useApp } from '@/lib/store/AppContext';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 import { Image, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function OrdersScreen() {
+  const isAuthenticated = useRequireAuth();
   const { orders, memorials, serviceTypes, setOrderCompleted } = useApp();
   const insets = useSafeAreaInsets();
+
+  if (!isAuthenticated) {
+    return (
+      <ScreenBackground>
+        <ThemedView
+          lightColor="transparent"
+          darkColor="transparent"
+          style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}
+        >
+          <ThemedText type="title">Orders unlock after sign in</ThemedText>
+          <ThemedText style={{ marginTop: 8, opacity: 0.7, textAlign: 'center' }}>
+            Track scheduled services once you create an account.
+          </ThemedText>
+        </ThemedView>
+      </ScreenBackground>
+    );
+  }
 
   function memorialName(id: string) {
     return memorials.find((m) => m.id === id)?.name_full ?? 'Memorial';
